@@ -21,11 +21,11 @@ jobs:
     - name: Push
       uses: appany/helm-oci-chart-releaser@v0.3.0
       with:
-        name: uni-chart # repo-name
+        name: uni # chart name
         repository: zhilyaev # organization
         tag: ${{ env.GIT_TAG }}
         path: .
         registry: ghcr.io
         registry_username: ${{ github.actor }}
-        registry_password: ${{ secrets.GITHUB_TOKEN }}
+        registry_password: ${{ github.token }}
     
