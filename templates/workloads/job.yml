@@ -1,0 +1,57 @@
+{{- if .Values.jobs -}}
+{{- $general := $.Values.jobsGeneral -}}
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $general }}
+    {{- if kindIs "float64" $val }}
+    {{- $_ := set $general $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- /* Check type if is string */ -}}
+{{- $jobs := list -}}
+{{- if kindIs "string" .Values.jobs -}}
+  {{- $jobs = fromYaml .Values.jobs -}}
+{{- else if kindIs "map" .Values.jobs -}}
+  {{- $jobs = .Values.jobs -}}
+{{- end -}}
+
+{{- range $name, $job := $jobs }}
+{{- if ne (.enabled | toString) "false" }}
+{{ $merged := deepCopy $.Values.jobsGeneral | mergeOverwrite  . }}
+{{- with $merged }}
+---
+apiVersion: batch/v1
+kind: Job
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- include "helpers.job" (dict "value" . "name" $name "context" $) | indent 2 }}
+
+{{- with .alert }}
+{{- $jobName := include "helpers.app.fullname" (dict "name" $name "context" $) }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: job-{{ $jobName }}
+  {{- with .labels }}
+  labels:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  namespace: {{ .namespace | default "metrics" }}
+spec:
+  groups:
+  - name: "jobs_rules"
+    interval: {{ .interval | default "1m" }} # period check for alerts
+    rules:
+    - alert: "job-{{ $jobName }}-too-long-execution"
+      expr: '((time() - kube_job_status_start_time{namespace="{{ $.Release.Namespace }}", job_name=~"{{ $jobName }}-.*"}) and kube_job_status_active{namespace="{{ $.Release.Namespace }}", job_name=~"{{ $jobName }}-.*"} == 1) > {{ .duration }}'
+      for: {{ .for | default "3m" }}
+      labels:
+        severity: {{ .severity | default "low" }}
+      annotations:
+        message: "Job {{ $.Release.Namespace }}/{{ $jobName }} is taking more than {{ .duration }} to complete"
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

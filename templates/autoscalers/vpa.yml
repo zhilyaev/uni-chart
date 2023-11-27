@@ -1,0 +1,15 @@
+{{- range $name, $vpa := .Values.vpas }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: {{ .apiVersion | default "autoscaling.k8s.io/v1" }}
+kind: VerticalPodAutoscaler
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- include "helpers.vpa.target" (dict "name" $name "scaleTargetRef" .scaleTargetRef "context" $) | nindent 2 }}
+  updatePolicy:
+    updateMode: {{ .mode | default "Auto"}}
+    {{- with .minReplicas }}minReplicas: {{ . }}{{- end }}
+  resourcePolicy:
+    {{- include "helpers.tpl" (dict "value" .resourcePolicy "context" $) | nindent 4 }}
+{{- end -}}
+{{- end -}}

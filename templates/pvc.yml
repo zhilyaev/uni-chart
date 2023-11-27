@@ -1,0 +1,23 @@
+{{- range $name, $p := .Values.pvcs }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := deepCopy $.Values.pvcsGeneral | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  accessModes: {{- include "helpers.tpl" ( dict "value" .accessModes "context" $ ) | nindent 4 }}
+  {{- with .volumeMode }}volumeMode: {{ . }}{{- end }}
+  resources:
+    requests:
+      storage: {{ .size | default "1Gi" }}
+  {{- with .storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  {{- with .selector }}
+    {{- include "helpers.tpl" ( dict "value" . "context" $ ) | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

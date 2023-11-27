@@ -1,0 +1,63 @@
+{{- if .Values.statefulSets }}
+{{- $general := $.Values.statefulSetsGeneral -}}
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $general }}
+    {{- if kindIs "float64" $val }}
+    {{- $_ := set $general $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- range $name, $d := .Values.statefulSets }}
+{{- if ne (.enabled | toString) "false" }}
+
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $d }}
+    {{- if kindIs "float64" $val -}}
+    {{- $_ := set $d $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- /* merged */ -}}
+{{- $merged := deepCopy $general | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: {{ include "common.capabilities.statefulSet.apiVersion" $ }}
+kind: StatefulSet
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- with .replicas }}
+  replicas: {{ . | default 1 }}
+  {{- end }}
+  {{- with .minReadySeconds }}
+  minReadySeconds: {{ . }}
+  {{- end }}
+  {{- with .podManagementPolicy }}
+  podManagementPolicy: {{ . }}
+  {{- end }}
+  {{- with .strategy }}
+  updateStrategy: {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  serviceName: {{ include "helpers.app.fullname" (dict "name" .serviceName "context" $) }}
+  selector:
+    matchLabels:
+      {{- include "helpers.obj.selectorLabels" (dict "value" . "context" $) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "helpers.obj.selectorLabels" (dict "value" . "context" $) | nindent 8 }}
+        {{- with $.Values.podLabels }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 8 }}{{- end }}
+        {{- with .podLabels }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 8 }}{{- end }}
+      annotations:
+        {{- include "helpers.workloads.checksum" | nindent 6 }}
+        {{- with $.Values.podAnnotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 8 }}{{- end }}
+        {{- with .podAnnotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 8 }}{{- end }}
+    spec:
+      {{- include "helpers.pod" (dict "value" . "name" $name "context" $) | indent 6 }}
+  {{- with .volumeClaimTemplates }}
+  volumeClaimTemplates:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,4 @@
+{{- range $key, $v := .Values.extra }}
+---
+{{ include "helpers.tpl" (dict "value" $v "context" $) }}
+{{- end }}

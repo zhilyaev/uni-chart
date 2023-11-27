@@ -1,0 +1,29 @@
+{{- range $name, $keda := .Values.kedas }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: {{ .apiVersion | default "keda.sh/v1alpha1" }}
+kind: ScaledObject
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- include "helpers.hpa.target" (dict "name" $name "scaleTargetRef" .scaleTargetRef "context" $) | nindent 2 }}
+  minReplicaCount: {{ .minReplicas | default 2 }}
+  maxReplicaCount: {{ .maxReplicas | default 3 }}
+  pollingInterval: {{ .pollingInterval | default 30 }}
+  cooldownPeriod: {{ .cooldownPeriod | default 300 }}
+  {{- with .idleReplicaCount}}
+  idleReplicaCount: {{ . }}
+  {{- end }}
+  {{- with .triggers }}
+  triggers:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  {{- with .fallback }}
+  fallback:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  {{- with .advanced }}
+  advanced:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+{{- end -}}
+{{- end -}}

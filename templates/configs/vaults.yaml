@@ -1,0 +1,25 @@
+{{- range $name, $vault := .Values.vaults }}
+{{- if ne (.enabled | toString) "false" }}
+{{- if has $name (keys $.Values.secrets) }}
+{{- $error := printf "the vault object has name %s that matches with $.Values.secrets.%s" $name $name }}
+{{- fail $error }}
+{{- end }}
+---
+apiVersion: {{ .apiVersion | default "external-secrets.io/v1beta1" }}
+kind: ExternalSecret
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- with .refreshInterval }}refreshInterval: {{ . }}{{- end }}
+  secretStoreRef:
+    name: {{ include "helpers.tpl" (dict "value" .store "context" $) }}
+    kind: SecretStore
+  target:
+    name: {{ include "helpers.app.fullname" (dict "name" $name "context" $) }}
+    {{- with  .creationPolicy }}creationPolicy: {{ . }}{{- end }}
+  dataFrom:
+    - extract:
+        key: {{ include "helpers.tpl" (dict "value" .path "context" $) }}
+        {{- with .revision }}version: {{ include "helpers.tpl" (dict "value" . "context" $) }}{{- end }}
+
+{{- end -}}
+{{- end -}}

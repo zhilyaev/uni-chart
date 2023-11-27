@@ -1,0 +1,62 @@
+{{- range $name, $s := $.Values.services }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := deepCopy $.Values.servicesGeneral | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: v1
+kind: Service
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- with .clusterIP }}
+  clusterIP: {{ . }}
+  {{- end }}
+
+  {{- if not (empty .type) }}
+  type: {{ .type }}
+
+  {{- if eq .type "LoadBalancer" }}
+  {{- with .loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  {{- with .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- else if (eq .type "NodePort") }}
+  {{- with .externalTrafficPolicy }}
+  externalTrafficPolicy: {{ . }}
+  {{- else }}
+  externalTrafficPolicy: "Cluster"
+  {{- end }}
+  {{- with .healthCheckNodePort }}
+  healthCheckNodePort: {{ . }}
+  {{- end }}
+  {{- end }}
+  {{- with .externalIPs }}
+  externalIPs: {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- else }}
+  type: "ClusterIP"
+  {{- end }}
+  ports:
+  {{- range .ports }}
+  - name: {{ .name | default $name}}
+    protocol: {{ .protocol | default "TCP"}}
+    port: {{ .port | default $name }}
+    {{- if not (empty .targetPort) }}
+    targetPort: {{ .targetPort }}
+    {{- end }}
+    {{- if not (empty .nodePort) }}
+    nodePort: {{ .nodePort }}
+    {{- end }}
+  {{- else }}
+  - name: {{ $name | quote }}
+    port: {{ $name }}
+  {{- end }}
+  selector:
+    {{- include "helpers.obj.selectorLabels" (dict "value" . "context" $) | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}

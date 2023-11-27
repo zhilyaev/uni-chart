@@ -1,0 +1,461 @@
+# kubeVersion: 1.25.0
+# nameOverride: "MY_CUSTOM_RELEASE_NAME"
+
+notes: "Successful deploy!"
+
+extra: {}
+#  net-pol: |-
+#    apiVersion: networking.k8s.io/v1
+#    kind: NetworkPolicy
+#    metadata:
+#      name: {{ include "helpers.app.fullname" (dict "name" "nw-policy" "context" $) }}
+#      namespace: {{ .Release.Namespace | quote }}
+#    spec:
+#      podSelector:
+#        matchLabels:
+#          role: db
+#      policyTypes:
+#      - Ingress
+#      - Egress
+#      ingress:
+#      - from:
+#        - ipBlock:
+#            cidr: 172.17.0.0/16
+#            except:
+#            - 172.17.1.0/24
+#        - namespaceSelector:
+#            matchLabels:
+#              project: myproject
+#        - podSelector:
+#            matchLabels:
+#              role: frontend
+#        ports:
+#        - protocol: TCP
+#          port: 6379
+#      egress:
+#      - to:
+#        - ipBlock:
+#            cidr: 10.0.0.0/24
+#        ports:
+#        - protocol: TCP
+#          port: 5978
+
+annotations: {}
+#  general-annotation: general-annotation-value
+
+labels: {}
+#  general-label: general-label-value
+
+
+
+#   ██████  ██████  ███    ██ ███████ ██  ██████  ██    ██ ██████   █████  ████████ ██  ██████  ███    ██ ███████
+#  ██      ██    ██ ████   ██ ██      ██ ██       ██    ██ ██   ██ ██   ██    ██    ██ ██    ██ ████   ██ ██
+#  ██      ██    ██ ██ ██  ██ █████   ██ ██   ███ ██    ██ ██████  ███████    ██    ██ ██    ██ ██ ██  ██ ███████
+#  ██      ██    ██ ██  ██ ██ ██      ██ ██    ██ ██    ██ ██   ██ ██   ██    ██    ██ ██    ██ ██  ██ ██      ██
+#   ██████  ██████  ██   ████ ██      ██  ██████   ██████  ██   ██ ██   ██    ██    ██  ██████  ██   ████ ███████
+
+
+
+# --set "envs.FOO=bar,envs.TEST=true"
+envs: {}
+#  BAR: foo
+#  TEST: true
+
+# --set "envsString=$ENVS_STRING"
+envsString: ""
+#envsString: |
+#  BAR2: foo2
+
+# --set "secretEnvs.FOO=bar"
+secretEnvs: {}
+#  FOO: bar
+
+# --set "secretEnvsString=$SECRET_ENVS_STRING"
+secretEnvsString: ""
+#secretEnvsString: |
+#  FOO: BAR
+
+
+#  ██     ██  ██████  ██████  ██   ██ ██       ██████   █████  ██████  ███████
+#  ██     ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██   ██ ██
+#  ██  █  ██ ██    ██ ██████  █████   ██      ██    ██ ███████ ██   ██ ███████
+#  ██ ███ ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██   ██      ██
+#   ███ ███   ██████  ██   ██ ██   ██ ███████  ██████  ██   ██ ██████  ███████
+
+podLabels: {}
+#  pod-label: some
+
+podAnnotations: {}
+#  checksum/my: '{{ include "helpers.checksum" (printf "%s%s" $.Values.my) }}'
+#  pod-annotation: true
+
+selectorLabels: {}
+  #  label: special
+  
+priorityClassName: ""
+
+
+# Default image for all workloads
+image:
+  registry: docker.io
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+  #- name: regcred
+
+
+# Predefined Affinity block
+affinityPreset:
+  enabled: false # disable presets by default
+  # Pod affinity preset
+  # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  # Allowed values: soft, hard, nil (nil means disabling)
+  podAffinityType: soft
+  # Pod anti-affinity preset
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  # Allowed values: soft, hard, nil (nil means disabling)
+  podAntiAffinityType: soft
+  
+  # Node affinity preset
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  nodeAffinity:
+    # Node affinity type
+    # Allowed values: soft, hard, nil (nil means disabling)
+    type: "soft"
+    # Node label key to match
+    # E.g.
+    # key: "kubernetes.io/e2e-az-name"
+    key: "topology.kubernetes.io/zone"
+    # Node label values to match
+    # E.g.
+    # values:
+    #   - e2e-az1
+    #   - e2e-az2
+    values: []
+    #  - asia-southeast1-a
+    #  - asia-southeast1-b
+    #  - asia-southeast1-c
+
+# affinity override affinityPreset
+affinity: {}
+
+
+serviceAccountName: ""
+
+hostAliases: []
+dnsPolicy: []
+
+
+volumes: []
+#- name: cache
+#  emptyDir: {}
+
+extraVolumes: []
+volumeMounts: []
+
+# diagnosticMode works with all defined containers
+diagnosticMode:
+  enabled: false
+  command: ["sleep"]
+  args: ["infinity"]
+
+
+#   ██████  ███████ ███    ██ ███████ ██████   █████  ██      ███████
+#  ██       ██      ████   ██ ██      ██   ██ ██   ██ ██      ██
+#  ██   ███ █████   ██ ██  ██ █████   ██████  ███████ ██      ███████
+#  ██    ██ ██      ██  ██ ██ ██      ██   ██ ██   ██ ██           ██
+#   ██████  ███████ ██   ████ ███████ ██   ██ ██   ██ ███████ ███████
+
+deploymentsGeneral: {}
+statefulSetsGeneral: {}
+daemonSetsGeneral: {}
+cronJobsGeneral: {}
+jobsGeneral: {}
+hooksGeneral: {}
+
+serviceAccountGeneral: {}
+pdbsGeneral: {}
+pvcsGeneral: {}
+
+serviceMonitorsGeneral: {}
+#  annotations:
+#    test: test2
+#serviceAccount: {}
+#  my:
+#    annotations:
+#      bla-bla: key
+alertsGeneral: {}
+
+networkPoliciesGeneral: {}
+ingressesGeneral: {}
+servicesGeneral: {}
+gatewaysGeneral: {}
+
+
+#   ██████  ██████  ██      ██      ███████  ██████ ████████ ██  ██████  ███    ██ ███████
+#  ██      ██    ██ ██      ██      ██      ██         ██    ██ ██    ██ ████   ██ ██
+#  ██      ██    ██ ██      ██      █████   ██         ██    ██ ██    ██ ██ ██  ██ ███████
+#  ██      ██    ██ ██      ██      ██      ██         ██    ██ ██    ██ ██  ██ ██      ██
+#   ██████  ██████  ███████ ███████ ███████  ██████    ██    ██  ██████  ██   ████ ███████
+
+deployments: {}
+#  nginx:
+#    labels: {}
+#    podLabels: {}
+#    podAnnotations:
+#      checksum/secret/token: '{{ include "helpers.checksum" $.Values.secrets.token }}'
+#    replicas: 2
+#    selectorLabels:
+#      app: my-nginx
+#    serviceAccountName: deployer
+#    #affinity:
+#    #  nodeAffinity:
+#    #    requiredDuringSchedulingIgnoredDuringExecution:
+#    #      nodeSelectorTerms:
+#    #      - matchExpressions:
+#    #        - key: node-role
+#    #          operator: In
+#    #          values:
+#    #          - prod
+#    containers:
+#    - name: nginx
+#      #image:
+#        #repository: nginx
+#        #tag: 1.19
+#        #pullPolicy: Always
+#      env:
+#      - name: MY_ENV
+#        value: "1234"
+#      - name: QTE
+#        value: safn8
+#      envsFromSecret:
+#        webadmin:
+#        - JAVA_OPTS: JVM_OPTS
+#        - QWE
+#      envSecrets:
+#      - secret-envs
+#      envsFromConfigmap:
+#        some-cm:
+#        - LEL: LOL
+#      envConfigmaps:
+#      - envs
+#      #ports:
+#      #- name: http
+#      #  containerPort: 8080
+#      volumeMounts:
+#      - name: secret-file
+#        mountPath: /var/lib/secret
+#      - name: app-pvc
+#        mountPath: /var/www/html/files
+#    volumes:
+#    - name: secret-file
+#      type: secret
+#    - name: app-data
+#      type: pvc
+
+statefulSets: {}
+daemonSets: {}
+cronJobs: {}
+#  generate-data:
+#    schedule: "*/5 * * * *"
+#    command: "php yii crontab/generate-data"
+#    singleOnly: true
+#    commandDurationAlert: 600
+#    commandMaxDuration: 800
+#    volumeMounts:
+#    - name: secret-file
+#      mountPath: /etc/app
+#      readOnly: true
+#    volumes:
+#    - name: secret-file
+#      type: secret
+#      items:
+#      - key: app.conf
+#        mode: 0600
+#        path: app.conf
+#  auto-sender:
+#    schedule: "*/5 * * * *"
+#    command: "php yii crontab/auto-sender"
+
+jobs: {}
+#  refresh-cache:
+#    command: "php yii crontab/refresh-cache"
+#    commandDurationAlert: 30
+#    commandMaxDuration: 60
+
+hooks: {}
+#  migration-up:
+#    containers:
+#    - image: registry.app.ru/app-migration
+#      args:
+#      - up
+#      envFrom:
+#      - secretRef:
+#          name: server-env
+
+# It will create secrets
+imagePullSecrets: {}
+#  registry.org: |
+#    {"auths":{"registry.org":{"auth":"<base64>"}}}
+#  registry.org-rw: b64:$({"auths":{"registry.org":{"auth":"<base64>"}}} | base64)
+
+
+configMaps: {}
+  #some-cm:
+  #  labels:
+  #    kek: lol
+  #  data:
+  #    LOL: kek
+  #json-file:
+  # data:
+  #   file.json: {
+  #     "arg": "value"
+  #   }
+
+secrets: {}
+  # # --set "secrets.secret-file.data.api\.key=$SOME_ENV"
+  #secret-file:
+  #  data:
+  #    api.key: |-
+  #      my-super-secret-value
+  # # --set "secrets.test1.labels.blah=blah,secrets.test1.data.BAR=foo"
+  # test1:
+  #  labels:
+  #    blah: blah
+  #  data:
+  #    BAR: foo
+  # # --set-file "secrets.domain-tls.type=kubernetes.io\/tls,secrets.domain-tls.data.tls\.crt=path/to/tls.crt,secrets.domain-tls.data.tls\.key=path/to/tls.key"
+  # nixys-tls:
+  #  type: kubernetes.io/tls
+  #  data:
+  #    tls.crt: |-
+  #      bla-bla-bla
+  #    tls.key: |-
+  #      bla-bla-bla
+  # # --set "secrets.json-file.data.file\.json=$(printf %q $(cat file.json))"
+  # # --set-file "secrets.json-file.data.file\.json=path/to/file.json"
+  # json-file:
+  #   data:
+  #     file.json: {"arg": "value"}
+
+vaults: {}
+#  envs:
+#    store: my-secret-store
+#    path: secret/hello/world
+#    revision: 1
+
+awssm: {}
+awsps: {}
+
+serviceAccount: {}
+#  firstaccount:
+#    role:
+#      name: test-role
+#      rules:
+#      - apiGroups:
+#        - ""
+#        - apps
+#        - extensions
+#        resources:
+#        - replicasets
+#        - pods
+#        - deployments
+#        verbs:
+#        - list
+#        - watch
+#        - create
+#        - update
+#        - get
+#        - delete
+#    clusterRole:
+#      name: view
+#  secondaccount: {}
+#  thirdaccount:
+#    clusterRole:
+#      name: thirdaccountclusterrole
+#      rules:
+#      - apiGroups: ["stable.example.com"]
+#        resources: ["crontabs"]
+#        verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+pdbs: {}
+#  app:
+#    minAvailable: 1
+
+# All PVSs will be added to `volumes` block in each workload excluding hooks
+pvcs: {}
+#  app-data:
+#    accessModes:
+#    - ReadWriteOnce
+#    - ReadWriteMany
+#    size: 8Gi
+
+hpas: {}
+vpas: {}
+kedas: {}
+
+alerts: {}
+serviceMonitors: {}
+#  app-sm:
+#    endpoints:
+#    - interval: 30s
+#      port: exporter
+#      path: /metrics
+#    selectorLabels:
+#      app: nginx
+#    labels:
+#      foo: foo
+
+networkPolicies: {}
+#  allow-internal-ns-metrics:
+#    ingress:
+#      - from:
+#          - namespaceSelector:
+#              matchLabels:
+#                name: metrics
+#          - namespaceSelector:
+#              matchLabels:
+#                name: "{{ .Release.Namespace }}"
+
+services:
+#  8080: {} # create 8080 ClusterIP
+#  nginx:
+#    clusterIP: None
+#    ports:
+#    - name: http
+#      protocol: TCP
+#      port: 8080
+#    selectorLabels:
+#      app: my-nginx
+
+ingresses: {}
+#  nixys.ru:
+#    annotations:
+#      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#      nginx.ingress.kubernetes.io/proxy-body-size: "128m"
+#    certManager:
+#      issuerType: cluster-issuer
+#      issuerName: letsencrypt
+#    hosts:
+#    - paths:
+#      - serviceName: nginx
+#        servicePort: http
+#  nixys.org:
+#    annotations:
+#      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+#    hosts:
+#    - paths:
+#      - path: /api
+#        servicePort: api
+#    - hostname: nixys.com
+#      paths:
+#      - path: /api
+#        servicePort: api
+#    tls:
+#    - hosts:
+#      - nixys.com
+#      - nixys.org
+#      secretName: "nixys-tls"
+
+gateways: {}

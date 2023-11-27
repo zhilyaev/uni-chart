@@ -1,0 +1,90 @@
+{{- if .Values.serviceAccount -}}
+{{- $serviceAccount := list -}}
+{{- if kindIs "string" .Values.serviceAccount -}}
+{{- $serviceAccount = fromYaml .Values.serviceAccount -}}
+{{- else if kindIs "map" .Values.serviceAccount -}}
+{{- $serviceAccount = .Values.serviceAccount -}}
+{{- end -}}
+{{- range $name, $val := $serviceAccount }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := deepCopy $.Values.serviceAccountGeneral | mergeOverwrite  . }}
+{{- with $merged }}
+---
+apiVersion: v1
+kind: ServiceAccount
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+
+{{- if .role }}
+{{- if .role.rules }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+rules:
+{{ include "helpers.tpl" ( dict "value" $val.role.rules "context" $ )}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "helpers.app.fullname" (dict "name" $val.role.name "context" $) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "helpers.app.fullname" (dict "name" $name "context" $) }}
+  namespace: {{ $.Release.Namespace | quote }}
+{{- else }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ $val.role.name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "helpers.app.fullname" (dict "name" $name "context" $) }}
+  namespace: {{ $.Release.Namespace | quote }}
+{{- end }}
+{{- end }}
+{{- if .clusterRole }}
+{{- if .clusterRole.rules }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+rules:
+{{ include "helpers.tpl" ( dict "value" $val.clusterRole.rules "context" $ )}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "helpers.app.fullname" (dict "name" $val.clusterRole.name "context" $) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "helpers.app.fullname" (dict "name" $name "context" $) }}
+  namespace: {{ $.Release.Namespace | quote }}
+{{- else }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ $val.clusterRole.name }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "helpers.app.fullname" (dict "name" $name "context" $) }}
+  namespace: {{ $.Release.Namespace | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

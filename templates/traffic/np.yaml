@@ -1,0 +1,26 @@
+{{- range $name, $np := .Values.networkPolicies }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := deepCopy $.Values.networkPoliciesGeneral | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: {{ include "common.capabilities.networkPolicy.apiVersion" $ }}
+kind: NetworkPolicy
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "helpers.obj.selectorLabels" (dict "value" . "context" $) | nindent 6 }}
+  policyTypes:
+    {{ if .ingress }}- Ingress{{ end }}
+    {{ if .egress }}- Egress {{ end }}
+  {{- with .ingress }}
+  ingress:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  {{- with .egress }}
+  egress:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}

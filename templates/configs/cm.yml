@@ -1,0 +1,22 @@
+{{- range $name, $cm := .Values.configMaps -}}
+{{- if ne (.enabled | toString) "false" }}
+{{- if not (eq $name "envs") }}
+---
+apiVersion: v1
+kind: ConfigMap
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+data:
+  {{- include "helpers.tpl" ( dict "value" $cm.data "context" $ ) | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if or (not (empty .Values.envs)) (not (empty .Values.envsString)) }}
+---
+apiVersion: v1
+kind: ConfigMap
+{{ include "obj.metadata" (dict "name" "envs" "value" . "context" $) }}
+data:
+  {{- include "helpers.configmaps.renderConfigMap" (dict "value" .Values.envs) | indent 2 }}
+  {{- include "helpers.configmaps.renderConfigMap" (dict "value" .Values.envsString) | indent 2 }}
+{{- end }}

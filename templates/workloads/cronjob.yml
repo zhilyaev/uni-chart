@@ -1,0 +1,75 @@
+{{- if .Values.cronJobs -}}
+
+{{- $general := $.Values.cronJobsGeneral -}}
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $general }}
+    {{- if kindIs "float64" $val }}
+    {{- $_ := set $general $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- /* Check type if is string */ -}}
+{{- $cronJobs := list -}}
+{{- if kindIs "string" .Values.cronJobs -}}
+  {{- $cronJobs = fromYaml .Values.cronJobs -}}
+{{- else if kindIs "map" .Values.cronJobs -}}
+  {{- $cronJobs = .Values.cronJobs -}}
+{{- end -}}
+
+{{- range $name, $job := $cronJobs }}
+{{- if ne (.enabled | toString) "false" }}
+
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $job }}
+    {{- if kindIs "float64" $val -}}
+    {{- $_ := set $job $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $merged := deepCopy $general | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: {{ include "common.capabilities.cronjob.apiVersion" $ }}
+kind: CronJob
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  schedule: {{ include "helpers.tpl" (dict "value" .schedule "context" $) | quote }}
+  {{ with .timeZone }}timeZone: {{ . }}{{- end }}
+  {{ with .concurrencyPolicy }}concurrencyPolicy: {{ . }}{{- end }}
+  {{ with .startingDeadlineSeconds }}startingDeadlineSeconds: {{ . }}{{- end }}
+  {{ with .successfulJobsHistoryLimit }}successfulJobsHistoryLimit: {{ . }}{{- end }}
+  {{ with .failedJobsHistoryLimit }}failedJobsHistoryLimit: {{ . }}{{- end }}
+  jobTemplate:
+    spec:
+      {{- include "helpers.job" (dict "value" . "name" $name "context" $) | indent 6 }}
+
+
+{{- with .alert }}
+{{- $cjName := include "helpers.app.fullname" (dict "name" $name "context" $) }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cronjob-{{ $cjName }}
+  {{- with .labels }}
+  labels:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+  namespace: {{ .namespace | default "metrics" }}
+spec:
+  groups:
+    - name: "jobs_rules"
+      interval: {{ .interval | default "1m" }} # period check for alerts
+      rules:
+        - alert: "cronjob-{{ $cjName }}-too-long-execution"
+          expr: '((time() - kube_job_status_start_time{namespace="{{ $.Release.Namespace }}", job_name=~"{{ $cjName }}-.*"}) and kube_job_status_active{namespace="{{ $.Release.Namespace }}", job_name=~"{{ $cjName }}-.*"} == 1) > {{ .duration }}'
+          for: {{ .for | default "3m" }}
+          labels:
+            severity: {{ .severity | default "low" }}
+          annotations:
+            message: "CronJob {{ $.Release.Namespace }}/{{ $cjName }} is taking more than {{ .duration }} to complete"
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

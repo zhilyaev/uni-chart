@@ -1,0 +1,68 @@
+{{- range $name, $ing := .Values.ingresses }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := deepCopy $.Values.ingressesGeneral | mergeOverwrite . }}
+{{- with $merged }}
+---
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" $ }}
+kind: Ingress
+{{/* TODO: obj.metadata */}}
+metadata:
+  name: {{ include "helpers.app.fullname" (dict "name" (.name | default $name) "context" $) }}
+  namespace: {{ $.Release.Namespace | quote }}
+  labels:
+      {{- include "helpers.obj.labels" (dict "value" . "context" $) | nindent 4 }}
+  annotations:
+    {{- with $.Values.annotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}{{- end }}
+    {{- with .annotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}{{- end }}
+    {{- with .certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- if .issuerName }}
+    cert-manager.io/{{ .issuerType | default "cluster-issuer" }}: {{ .issuerName }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- if and (eq "true" (include "common.ingress.supportsIngressClassname" $)) (.ingressClassName) }}
+  ingressClassName: {{ .ingressClassName }}
+  {{- end }}
+  rules:
+  {{- if not (hasKey . "hosts") }}{{- $_ := set . "hosts" (list (dict "hostname" (coalesce .hostname  $name))) }}{{- end }}
+  {{- range .hosts }}
+  - {{ if .hostname -}}
+    host: {{ include "helpers.tpl" (dict "value" .hostname "context" $) }}
+    {{- else -}}
+    host: {{ $name }}
+    {{- end }}
+    http:
+      paths:
+      {{- if not (hasKey . "paths") }}{{- $_ := set . "paths" (list (dict "path" (coalesce .path $merged.path))) }}{{- end }}
+      {{- range .paths }}
+      - path: {{ .path | default "/" }}
+        {{- if eq "true" (include "common.ingress.supportsPathType" $) }}
+        pathType: {{ .pathType | default "Prefix" }}
+        {{- end }}
+        backend:
+          {{- $serviceName := include "helpers.app.fullname" (dict "name" (coalesce .serviceName $merged.serviceName | toString ) "context" $) }}
+          {{- $servicePort := coalesce .servicePort $merged.servicePort }}
+          {{- include "common.ingress.backend" (dict "serviceName" $serviceName  "servicePort" $servicePort "context" $) | nindent 10 }}
+      {{- end }}
+  {{- end }}
+  {{- if or .certManager .tls }}
+  tls:
+  {{- if .certManager }}
+  - hosts:
+    {{- range $ing.hosts }}
+    {{- if .hostname }}
+    - {{ include "helpers.tpl" (dict "value" .hostname "context" $) }}
+    {{- else }}
+    - {{ $name }}
+    {{- end }}
+    {{- end }}
+    secretName: {{ .tlsName | default (include "helpers.app.fullname" (dict "name" ($ing.name | default $name ) "context" $)) }}-tls
+  {{- end }}
+  {{- if .tls }}
+  {{- include "helpers.tpl" ( dict "value" .tls "context" $ ) | nindent 2 }}
+  {{- end }}
+  {{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
