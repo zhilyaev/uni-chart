@@ -22,7 +22,7 @@ jobs:
       uses: appany/helm-oci-chart-releaser@v0.3.0
       with:
         name: uni # chart name
-        repository: zhilyaev/uni-chart
+        repository: zhilyaev
         tag: ${{ env.GIT_TAG }}
         path: .
         registry: ghcr.io
