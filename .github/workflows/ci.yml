@@ -23,7 +23,7 @@ jobs:
       with:
         name: uni
         repository: zhilyaev
-        tag: {{ env.GIT_TAG }}
+        tag: ${{ env.GIT_TAG }}
         path: .
         registry: ghcr.io
         registry_username: ${{ github.actor }}
