@@ -30,6 +30,6 @@ Who deploys into Kubernetes/OpenShift on a regular basis.
 To install the chart with the release name `my-release`:
 
 ```bash
-$ helm install my-release . -f values.yaml
+$ helm install my-release oci://ghcr.io/zhilyaev/uni -f my-values.yaml
 ```
 
