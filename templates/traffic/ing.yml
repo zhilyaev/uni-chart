@@ -27,6 +27,8 @@ spec:
   rules:
   {{- if not (hasKey . "hosts") }}{{- $_ := set . "hosts" (list (dict "hostname" (coalesce .hostname  $name))) }}{{- end }}
   {{- range .hosts }}
+  {{- $host :=  (kindIs "string" . ) | ternary (dict "hostname" . ) .  }}
+  {{- with $host }}
   - {{ if .hostname -}}
     host: {{ include "helpers.tpl" (dict "value" .hostname "context" $) }}
     {{- else -}}
@@ -44,25 +46,29 @@ spec:
           {{- $serviceName := include "helpers.app.fullname" (dict "name" (coalesce .serviceName $merged.serviceName | toString ) "context" $) }}
           {{- $servicePort := coalesce .servicePort $merged.servicePort }}
           {{- include "common.ingress.backend" (dict "serviceName" $serviceName  "servicePort" $servicePort "context" $) | nindent 10 }}
-      {{- end }}
-  {{- end }}
+      {{- end }} {{/* range paths */}}
+  {{- end }} {{/* $host */}}
+  {{- end }} {{/* range hosts */}}
   {{- if or .certManager .tls }}
   tls:
   {{- if .certManager }}
   - hosts:
     {{- range $ing.hosts }}
+    {{- $hostTLS :=  (kindIs "string" . ) | ternary (dict "hostname" . ) .  }}
+    {{ with $hostTLS }}
     {{- if .hostname }}
     - {{ include "helpers.tpl" (dict "value" .hostname "context" $) }}
     {{- else }}
     - {{ $name }}
     {{- end }}
     {{- end }}
+    {{- end }}
     secretName: {{ .tlsName | default (include "helpers.app.fullname" (dict "name" ($ing.name | default $name ) "context" $)) }}-tls
   {{- end }}
-  {{- if .tls }}
-  {{- include "helpers.tpl" ( dict "value" .tls "context" $ ) | nindent 2 }}
+  {{- with .tls }}
+  {{- include "helpers.tpl" ( dict "value" . "context" $ ) | nindent 2 }}
   {{- end }}
   {{- end }}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+{{- end -}} {{/* merged */}}
+{{- end -}} {{/* enabled */}}
+{{- end -}} {{/* range $.Values.Ingresses */}}
