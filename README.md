@@ -1,4 +1,6 @@
-![logo](logo_1024.png)
+<p align="center">
+  <img alt="uni-chart logo" src="https://github.com/zhilyaev/uni-chart/raw/main/logo_1024.png" style="max-height:100%;" height="300px" /></a>
+</p>
 
 # Introduction
 
