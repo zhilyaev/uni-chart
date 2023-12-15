@@ -1,3 +1,5 @@
+![logo](logo_1024.png)
+
 # Introduction
 
 This is the universal helm chart designed for delivering develop-based application.
