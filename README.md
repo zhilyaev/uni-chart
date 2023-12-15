@@ -1,12 +1,19 @@
-<p align="center">
-  <img alt="uni-chart logo" src="https://github.com/zhilyaev/uni-chart/raw/main/logo_1024.png" style="max-height:100%;" height="300px" /></a>
-</p>
+<div>
+  <img align="left" alt="uni-chart logo" src="https://github.com/zhilyaev/uni-chart/raw/main/logo_1024.png" style="max-height:100%;" height="300px" /></a>
+</div>
 
-# Introduction
 
-This is the universal helm chart designed for delivering develop-based application.
+# Universal helm chart
 
-[**Documentations**](REFERENCE.md)
+The Universal Helm Chart tries to encompass a broader scope, offering a more flexible and adaptable solution for deploying applications on Kubernetes. Users can customize these charts by providing values for various parameters, enabling them to deploy applications with different configurations while using the same underlying Helm Chart.
+
+### [ >> documentations << ](REFERENCE.md)
+
+<br clear="left">
+
+---
+
+
 
 ## Features
 
