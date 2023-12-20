@@ -1,0 +1,6 @@
+logo*
+.git/
+.github/
+.gitlab/
+*.md
+.gitignore
