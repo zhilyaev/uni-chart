@@ -1,6 +1,7 @@
+{{- $general := $.Values.ingressesGeneral -}}
 {{- range $name, $ing := .Values.ingresses }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.ingressesGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ include "common.capabilities.ingress.apiVersion" $ }}
@@ -72,3 +73,4 @@ spec:
 {{- end -}} {{/* merged */}}
 {{- end -}} {{/* enabled */}}
 {{- end -}} {{/* range $.Values.Ingresses */}}
+

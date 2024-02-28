@@ -1,6 +1,7 @@
+{{- $general := $.Values.servicesGeneral -}}
 {{- range $name, $s := $.Values.services }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.servicesGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: v1

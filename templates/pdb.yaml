@@ -1,6 +1,7 @@
+{{- $general := $.Values.pdbsGeneral -}}
 {{- range $name, $pdb := .Values.pdbs }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.pdbsGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ include "common.capabilities.pdb.apiVersion" $ }}

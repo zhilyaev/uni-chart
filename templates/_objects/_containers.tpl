@@ -2,9 +2,14 @@
 {{- $ := .context -}}
 {{- $name := .name -}}
 {{- $type := .type -}}
-{{- $parent := .parent -}}
+{{- $parent := deepCopy .parent -}}
+{{- /* fix: Hating helm because it can't delete non string value. */ -}}
+{{ $_ := set $parent "initContainers" "" }}
+{{ $_ := unset $parent "initContainers" }}
+{{ $_ := set $parent "containers" "" }}
+{{ $_ := unset $parent "containers" }}
 {{- range .value }}
-- {{- $merged := mustDeepCopy $parent | mergeOverwrite . -}}
+- {{- $merged := mergeOverwrite dict $parent . -}}
   {{- with $merged -}}
   {{- if .name }}
   name: {{ include "helpers.tpl" ( dict "value" .name "context" $) }}

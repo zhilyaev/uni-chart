@@ -1,0 +1,5 @@
+deploymentsGeneral:
+  envSecrets: [envs]
+  envConfigmaps: [envs]
+deployments:
+  test: {}

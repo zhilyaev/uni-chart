@@ -17,8 +17,8 @@
     {{- end -}}
 {{- end -}}
 
-{{- /* merged */ -}}
-{{- $merged := deepCopy $general | mergeOverwrite . }}
+
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" $ }}

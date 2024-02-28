@@ -26,7 +26,7 @@
     {{- end -}}
 {{- end -}}
 
-{{- $merged := deepCopy $general | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" $ }}

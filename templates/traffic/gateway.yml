@@ -1,6 +1,7 @@
+{{- $general := $.Values.gatewaysGeneral -}}
 {{- range $name, $gateway := .Values.gateways }}
 {{- if ne (.enabled | toString) "false" }}
-{{ $merged := deepCopy $.Values.gatewaysGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -12,7 +13,6 @@ spec:
     {{- range .listeners }}
     {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
     {{- end }}
-
 {{- end -}}
 {{- end -}}
 {{- end -}}

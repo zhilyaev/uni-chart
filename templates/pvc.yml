@@ -1,6 +1,7 @@
+{{- $general := $.Values.pvcsGeneral -}}
 {{- range $name, $p := .Values.pvcs }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.pvcsGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: v1

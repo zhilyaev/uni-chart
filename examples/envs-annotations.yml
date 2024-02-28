@@ -1,0 +1,7 @@
+envs:
+  HELLO: WORLD
+
+configMaps:
+  envs:
+    annotations:
+      my-anno: "true"

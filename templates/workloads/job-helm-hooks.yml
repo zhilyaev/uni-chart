@@ -18,8 +18,13 @@
 
 {{- range $name, $hook := $hooks }}
 {{- if ne (.enabled | toString) "false" }}
-
-{{- $merged := deepCopy $general | mergeOverwrite . }}
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $hook }}
+    {{- if kindIs "float64" $val -}}
+    {{- $_ := set $hook $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: batch/v1

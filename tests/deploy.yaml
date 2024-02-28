@@ -1,0 +1,112 @@
+suite: deploy
+release:
+  name: test
+  namespace: test
+templates: [templates/workloads/deploy.yml]
+documentSelector:
+  path: metadata.name
+  value: test
+tests:
+  - it: sugar-syntax for ConfigMapRef & SecretRef
+    values: [../examples/deployment-general-envs-magic.yml]
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+          value: test-envs
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+          value: test-envs
+
+
+  - it: containers overriding
+    set:
+      deploymentsGeneral:
+        resources:
+          limits:
+            memory: 0
+
+
+      deployments:
+        general: {} # should be 0
+
+        container-merge: # should be 1
+          containers:
+            - resources:
+                limits:
+                  memory: 1
+
+
+        general-merge: # should be 2
+          resources:
+            limits:
+              memory: 2
+
+        general-self-merge: # should be 3
+          resources:
+            limits:
+              memory: wtf
+          containers:
+            - resources:
+                limits:
+                  memory: 3
+
+        init-container-merge: # should be 4
+          initContainers:
+            - resources:
+                limits:
+                  memory: 4
+
+        init-container-self-merge: # should be 5
+          resources:
+            limits:
+              memory: wtf
+          initContainers:
+            - resources:
+                limits:
+                  memory: 5
+
+    asserts:
+      - documentSelector:
+          path: metadata.name
+          value: test-general
+        equal:
+          path: &res spec.template.spec.containers[0].resources.limits.memory
+          value: 0
+
+
+      - documentSelector:
+          path: metadata.name
+          value: test-container-merge
+        equal:
+          path: *res
+          value: 1
+
+      - documentSelector:
+          path: metadata.name
+          value: test-general-merge
+        equal:
+          path: *res
+          value: 2
+
+      - documentSelector:
+          path: metadata.name
+          value: test-general-self-merge
+        equal:
+          path: *res
+          value: 3
+
+      - documentSelector:
+          path: metadata.name
+          value: test-init-container-merge
+        equal:
+          path: spec.template.spec.initContainers[0].resources.limits.memory
+          value: 4
+
+      - documentSelector:
+          path: metadata.name
+          value: test-init-container-self-merge
+        equal:
+          path: spec.template.spec.initContainers[0].resources.limits.memory
+          value: 5

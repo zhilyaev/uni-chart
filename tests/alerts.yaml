@@ -1,0 +1,15 @@
+suite: alerts
+release:
+  name: test
+  namespace: test
+templates: [metrics/alert.yml]
+documentSelector:
+  path: metadata.name
+  value: test
+tests:
+  - it: alert tests with quotas
+    values: [../examples/alert-with-quotas.yml]
+    asserts:
+      - equal:
+          path: spec.groups[0].rules[0].annotations.summary
+          value: Expired key {{ $labels.key }}

@@ -167,12 +167,25 @@ diagnosticMode:
 #  ██    ██ ██      ██  ██ ██ ██      ██   ██ ██   ██ ██           ██
 #   ██████  ███████ ██   ████ ███████ ██   ██ ██   ██ ███████ ███████
 
-deploymentsGeneral: {}
-statefulSetsGeneral: {}
-daemonSetsGeneral: {}
-cronJobsGeneral: {}
-jobsGeneral: {}
-hooksGeneral: {}
+deploymentsGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
+
+statefulSetsGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
+daemonSetsGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
+cronJobsGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
+jobsGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
+hooksGeneral:
+  #  envSecrets: [envs]
+  envConfigmaps: [ envs ]
 
 serviceAccountGeneral: {}
 pdbsGeneral: {}
@@ -301,7 +314,9 @@ imagePullSecrets: {}
 #  registry.org-rw: b64:$({"auths":{"registry.org":{"auth":"<base64>"}}} | base64)
 
 
-configMaps: {}
+configMaps:
+  envs:
+    enabled: true
   #some-cm:
   #  labels:
   #    kek: lol

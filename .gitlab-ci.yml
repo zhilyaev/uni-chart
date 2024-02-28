@@ -1,0 +1,35 @@
+variables:
+  OCI_REGISTRY: $CI_REGISTRY
+  OCI_REGISTRY_USER: $CI_REGISTRY_USER
+  OCI_REGISTRY_PASSWORD: $CI_REGISTRY_PASSWORD
+
+  HELM_EXPERIMENTAL_OCI: 1 # relevant for < 3.8
+  HELM_VERSION: 3.13.3
+stages:
+  - code-scanning
+  - build
+
+helm push:
+  stage: build
+  image:
+    name: alpine/helm:$HELM_VERSION
+    entrypoint: [""]
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - helm registry login $OCI_REGISTRY --username $OCI_REGISTRY_USER --password $OCI_REGISTRY_PASSWORD
+  script:
+    - helm package . -u --version=$CI_COMMIT_TAG
+    - helm push *.tgz oci://$OCI_REGISTRY/$CI_PROJECT_NAMESPACE
+
+helm testing:
+  stage: code-scanning
+  image:
+    name: helmunittest/helm-unittest
+    entrypoint: [""]
+  script: helm unittest -f 'tests/*.y*ml' .
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_COMMIT_TAG
+      when: "never"
+

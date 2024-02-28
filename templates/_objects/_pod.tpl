@@ -4,10 +4,8 @@
 {{- with .value -}}
 {{/* Fix: null image */}}
 {{- if not (hasKey . "image") }}{{- $_ := set . "image" dict }}{{- end }}
-{{- if .serviceAccountName }}
-serviceAccountName: {{- include "helpers.tpl" (dict "value" .serviceAccountName "context" $) | nindent 2 }}
-{{- else if $.Values.serviceAccountName }}
-serviceAccountName: {{- include "helpers.tpl" (dict "value" $.Values.serviceAccountName  "context" $) | nindent 2 }}
+{{- if any .serviceAccountName $.Values.serviceAccountName }}
+serviceAccountName: {{- include "helpers.tpl" (dict "value" (.serviceAccountName | default $.Values.serviceAccountName) "context" $) | nindent 2 }}
 {{- end }}
 {{- if .hostAliases }}
 hostAliases: {{- include "helpers.tpl" (dict "value" .hostAliases "context" $) | nindent 2 }}

@@ -1,4 +1,5 @@
 {{- if .Values.serviceAccount -}}
+{{- $general := $.Values.statefulSetsGeneral -}}
 {{- $serviceAccount := list -}}
 {{- if kindIs "string" .Values.serviceAccount -}}
 {{- $serviceAccount = fromYaml .Values.serviceAccount -}}
@@ -7,7 +8,7 @@
 {{- end -}}
 {{- range $name, $val := $serviceAccount }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.serviceAccountGeneral | mergeOverwrite  . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: v1

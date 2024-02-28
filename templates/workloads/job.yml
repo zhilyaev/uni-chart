@@ -17,7 +17,15 @@
 
 {{- range $name, $job := $jobs }}
 {{- if ne (.enabled | toString) "false" }}
-{{ $merged := deepCopy $.Values.jobsGeneral | mergeOverwrite  . }}
+
+{{- /* Fix: int=0 */ -}}
+{{- range $key, $val := $job }}
+    {{- if kindIs "float64" $val -}}
+    {{- $_ := set $job $key ($val | toString) -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: batch/v1

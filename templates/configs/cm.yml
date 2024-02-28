@@ -1,22 +1,20 @@
-{{- range $name, $cm := .Values.configMaps -}}
+{{- range $name, $cm := $.Values.configMaps -}}
 {{- if ne (.enabled | toString) "false" }}
-{{- if not (eq $name "envs") }}
 ---
 apiVersion: v1
 kind: ConfigMap
 {{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
 data:
+  {{- if not (eq $name "envs") }}
   {{- include "helpers.tpl" ( dict "value" $cm.data "context" $ ) | nindent 2 }}
+  {{- else }}
+  {{- if or (not (empty $.Values.envs)) (not (empty $.Values.envsString)) }}
+  {{- include "helpers.configmaps.renderConfigMap" (dict "value" $.Values.envs) | indent 2 }}
+  {{- include "helpers.configmaps.renderConfigMap" (dict "value" $.Values.envsString) | indent 2 }}
+  {{- end }}
+  {{- if $cm.data }}
+  {{- fail "Don't allow use $.Values.configMaps.envs.data, You should use $.Values.envs or $.Values.envsString" }}
+  {{- end }}
+  {{- end }}
 {{- end }}
-{{- end }}
-{{- end }}
-
-{{- if or (not (empty .Values.envs)) (not (empty .Values.envsString)) }}
----
-apiVersion: v1
-kind: ConfigMap
-{{ include "obj.metadata" (dict "name" "envs" "value" . "context" $) }}
-data:
-  {{- include "helpers.configmaps.renderConfigMap" (dict "value" .Values.envs) | indent 2 }}
-  {{- include "helpers.configmaps.renderConfigMap" (dict "value" .Values.envsString) | indent 2 }}
 {{- end }}

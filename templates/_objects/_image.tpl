@@ -18,7 +18,7 @@
     {{- $s = ":" -}}
     {{- $t = $.Values.image.tag -}}
 {{- else -}}
-{{ fail "i don't know wtf is going on with your images" }}
+{{ fail "wtf is going on with your images" }}
 {{- end -}}
 {{- if $registry }}
     {{- printf "%s/%s%s%s" $registry $repository $s $t -}}

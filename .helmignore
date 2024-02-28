@@ -1,6 +1,8 @@
-logo*
-.git/
-.github/
-.gitlab/
 *.md
+.gitlab-ci.yml
 .gitignore
+.github
+tests
+logo*
+debug/
+examples/

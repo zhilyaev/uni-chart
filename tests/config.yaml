@@ -1,0 +1,25 @@
+suite: config
+release:
+  name: test
+  namespace: test
+templates: [configs/cm.yml]
+documentSelector:
+  path: metadata.name
+  value: envs
+tests:
+  - it: annotations for envs
+    values: [../examples/envs-annotations.yml]
+    asserts:
+      - equal:
+          path: metadata.annotations["my-anno"]
+          value: "true"
+
+  - it: just envs
+    set:
+      envs:
+        HELLO: WORLD
+    asserts:
+      - equal:
+          path: data.HELLO
+          value: WORLD
+

@@ -1,0 +1,37 @@
+suite: jobs
+release:
+  name: test
+  namespace: test
+templates: [workloads/job.yml]
+documentSelector:
+  path: metadata.name
+  value: test
+tests:
+  - it: zero field should be int not null
+    set:
+      jobs.test.backoffLimit: 0
+    asserts:
+      - equal:
+          path: spec.backoffLimit
+          value: 0
+
+  - it: if empty service account will use global
+    set:
+      serviceAccountName: global
+      jobs.test.backoffLimit: 0
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: global
+
+  - it: service account general override
+    set:
+      serviceAccountName: global
+      jobsGeneral:
+        serviceAccountName: general
+
+      jobs.test: {}
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: general

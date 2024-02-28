@@ -1,6 +1,7 @@
+{{- $general := $.Values.serviceMonitorsGeneral -}}
 {{- range $name, $sm := .Values.serviceMonitors }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.serviceMonitorsGeneral  | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ .apiVersion | default "monitoring.coreos.com/v1" }}

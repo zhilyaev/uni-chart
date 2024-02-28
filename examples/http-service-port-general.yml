@@ -1,0 +1,10 @@
+servicesGeneral:
+  ports:
+    - name: http
+      targetPort: 80
+
+services:
+  http:
+    ports:
+      - name: http
+        targetPort: 8080

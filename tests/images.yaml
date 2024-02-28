@@ -1,0 +1,134 @@
+suite: images
+release:
+  name: test
+  namespace: test
+templates: [workloads/deploy.yml]
+documentSelector:
+  path: metadata.name
+  value: test
+tests:
+  - it: override image by global
+    set:
+      image:
+        registry: docker.io
+        repository: global
+        tag: latest
+
+      deployments.test.replicas: 1
+
+    asserts:
+      - equal:
+          path: &res spec.template.spec.containers[0].image
+          value: docker.io/global:latest
+
+  - it: override image by deployment
+    set:
+      image:
+        registry: docker.io
+        repository: global
+        tag: latest
+
+      deployments.test.image.repository: abc
+
+    asserts:
+      - equal:
+          path: *res
+          value: docker.io/abc:latest
+
+  - it: full override image by deploymentsGeneral
+    set:
+      image:
+        registry: docker.io
+        repository: global
+        tag: latest
+
+      deploymentsGeneral:
+        image:
+          registry: general.io
+          repository: general
+          tag: 1.0.0
+
+      deployments.test: {}
+
+    asserts:
+      - equal:
+          path: *res
+          value: general.io/general:1.0.0
+
+  - it: part override image by deploymentsGeneral
+    set:
+      image:
+        registry: docker.io
+        repository: global
+        tag: latest
+
+      deploymentsGeneral:
+        image:
+          repository: general
+
+      deployments.test: {}
+
+    asserts:
+      - equal:
+          path: *res
+          value: docker.io/general:latest
+
+  - it: override image by specific deployment
+    set:
+      image.registry: docker.io
+
+      deploymentsGeneral:
+        image:
+          repository: general
+          tag: 1.0.0
+
+      deployments.test.image.tag: 1.2.3
+
+    asserts:
+      - equal:
+          path: *res
+          value: docker.io/general:1.2.3
+
+  - it: override image by specific container
+    set:
+      image:
+        registry: docker.io
+
+      deploymentsGeneral:
+        image:
+          repository: general
+          tag: 1.0.0
+
+      deployments.test:
+        containers:
+          - name: test
+            image:
+              repository: abc
+
+    asserts:
+      - equal:
+          path: *res
+          value: docker.io/abc:1.0.0
+
+  - it: override image by specific deployment and container
+    set:
+      image.registry: docker.io
+
+      deploymentsGeneral:
+        image:
+          repository: general
+          tag: 1.0.0
+
+      deployments.test:
+        image:
+          repository: wtf
+        containers:
+          - name: test
+            image:
+              repository: abc
+
+    asserts:
+      - equal:
+          path: *res
+          value: docker.io/abc:1.0.0
+

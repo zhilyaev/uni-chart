@@ -1,35 +1,14 @@
+{{- $general := $.Values.alertsGeneral -}}
 {{- range $name, $alert := .Values.alerts }}
 {{- if ne (.enabled | toString) "false" }}
-{{- $merged := deepCopy $.Values.alertsGeneral | mergeOverwrite . }}
+{{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
 apiVersion: {{ .apiVersion | default "monitoring.coreos.com/v1" }}
 kind: PrometheusRule
 {{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
 spec:
-  groups:
-    {{- range .groups }}
-    - name: {{ .name | default (include "helpers.app.fullname" (dict "name" $name "context" $)) }}
-      {{- with .interval }}
-      interval: {{ . }}
-      {{- end }}
-      {{- with .limit }}
-      limit: {{ . }}
-      {{- end }}
-      rules:
-        {{- range .rules }}
-        - alert: {{ .alert | default (include "helpers.app.fullname" (dict "name" $name "context" $)) }}
-          expr: {{ include "helpers.tpl" (dict "value" .expr "context" $) }}
-          {{- with .for }}
-          for: {{ . }}
-          {{- end }}
-          labels:
-            severity: {{ .severity | default "low" }}
-            {{- include "helpers.obj.labels" (dict "value" . "context" $) | nindent 12 }}
-          annotations:
-            message: {{- include "helpers.tpl" (dict "value" .msg "context" $) }}
-      {{- end }}
-  {{- end -}}
+  {{- . | toYaml | nindent 2 }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
