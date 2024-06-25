@@ -1,22 +1,6 @@
 apiVersion: v2
-name: uni
-version: 0.0.0
 description: universal helm chart
-icon: https://github.com/zhilyaev/uni-chart/raw/main/logo_1024.png
-home: https://github.com/zhilyaev/uni-chart
-sources: [https://github.com/zhilyaev/uni-chart]
-
-keywords:
-  - universal
-  - helm
-  - chart
-  - common
-  - unified
-  - all-in-one
-  - ultimate
-
 maintainers:
 - name: Dmitrii Zhiliaev
-  url: https://github.com/zhilyaev
-  email: 346cbd75@duck.com
-
+name: uni
+version: 0.0.0

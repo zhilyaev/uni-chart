@@ -30,7 +30,7 @@
 ---
 apiVersion: batch/v1
 kind: Job
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- include "helpers.job" (dict "value" . "name" $name "context" $) | indent 2 }}
 

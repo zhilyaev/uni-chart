@@ -2,8 +2,28 @@
 .gitlab-ci.yml
 .gitignore
 .github
-tests
+tests/
 logo*
 debug/
 examples/
 .git/
+
+
+.DS_Store
+# Common VCS dirs
+.bzr/
+.bzrignore
+.hg/
+.hgignore
+.svn/
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/

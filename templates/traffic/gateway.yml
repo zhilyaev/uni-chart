@@ -4,9 +4,9 @@
 {{- $merged := mergeOverwrite dict $general . }}
 {{- with $merged }}
 ---
-apiVersion: gateway.networking.k8s.io/v1
+apiVersion: {{ .apiVersion | default "gateway.networking.k8s.io/v1" }}
 kind: Gateway
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- with .gatewayClassName }}gatewayClassName: {{ . }}{{- end }}
   listeners:

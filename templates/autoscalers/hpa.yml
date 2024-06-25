@@ -3,7 +3,7 @@
 ---
 apiVersion: {{ include "common.capabilities.hpa.apiVersion" $ }}
 kind: HorizontalPodAutoscaler
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- include "helpers.hpa.target" (dict "name" $name "scaleTargetRef" .scaleTargetRef "context" $) | nindent 2 }}
   minReplicas: {{ .minReplicas | default 2 }}

@@ -3,7 +3,7 @@
 ---
 apiVersion: v1
 kind: ConfigMap
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 data:
   {{- if not (eq $name "envs") }}
   {{- include "helpers.tpl" ( dict "value" $cm.data "context" $ ) | nindent 2 }}

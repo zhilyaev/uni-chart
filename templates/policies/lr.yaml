@@ -1,9 +1,9 @@
-{{- range $name, $i := .Values.LimitRanges }}
+{{- range $name, $i := .Values.limitRanges }}
 {{- if ne (.enabled | toString) "false" }}
 ---
 apiVersion: v1
 kind: LimitRange
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   limits:
     {{- $limits := list -}}

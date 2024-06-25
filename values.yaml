@@ -1,8 +1,15 @@
 # kubeVersion: 1.25.0
 # nameOverride: "MY_CUSTOM_RELEASE_NAME"
 
+# -- Notes after successful deploy
 notes: "Successful deploy!"
 
+# -- resources preset
+resourcesPreset: "none"
+# -- it overrides resourcesPreset
+resources: {}
+
+# -- Any objects
 extra: {}
 #  net-pol: |-
 #    apiVersion: networking.k8s.io/v1
@@ -40,11 +47,14 @@ extra: {}
 #        - protocol: TCP
 #          port: 5978
 
+# -- extra annotations for all resources (for podSpecTemplate use podAnnotations instead)
 annotations: {}
 #  general-annotation: general-annotation-value
 
+# -- extra labels for all resources (for podSpecTemplate use podLabels instead)
 labels: {}
 #  general-label: general-label-value
+
 
 
 
@@ -56,22 +66,26 @@ labels: {}
 
 
 
-# --set "envs.FOO=bar,envs.TEST=true"
+# -- Environment variables for all workloads (recommended way)
 envs: {}
+#  --set "envs.FOO=bar,envs.TEST=true"
 #  BAR: foo
 #  TEST: true
 
-# --set "envsString=$ENVS_STRING"
+# -- use string as file for environment variables
 envsString: ""
+# --set "envsString=$ENVS_STRING"
 #envsString: |
 #  BAR2: foo2
 
-# --set "secretEnvs.FOO=bar"
+# -- environment variables as the secret
 secretEnvs: {}
+#  --set "secretEnvs.FOO=bar"
 #  FOO: bar
 
-# --set "secretEnvsString=$SECRET_ENVS_STRING"
+# -- use string as file for secret environment variables
 secretEnvsString: ""
+# --set "secretEnvsString=$SECRET_ENVS_STRING"
 #secretEnvsString: |
 #  FOO: BAR
 
@@ -82,52 +96,62 @@ secretEnvsString: ""
 #  ██ ███ ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██   ██      ██
 #   ███ ███   ██████  ██   ██ ██   ██ ███████  ██████  ██   ██ ██████  ███████
 
+# -- Extra pod labels
 podLabels: {}
 #  pod-label: some
 
+# -- Extra pod annotations
 podAnnotations: {}
 #  checksum/my: '{{ include "helpers.checksum" (printf "%s%s" $.Values.my) }}'
 #  pod-annotation: true
 
+# -- Extra selectors labels
 selectorLabels: {}
   #  label: special
-  
+
+# -- Default priorityClassName
 priorityClassName: ""
 
 
-# Default image for all workloads
+# -- Default image for all workloads
 image:
+  # -- Default registry
   registry: docker.io
+  # -- Default repository
   repository: nginx
+  # -- Default tag
   tag: latest
+  # -- Default pullPolicy
   pullPolicy: IfNotPresent
+  # -- Default pullSecrets
   pullSecrets: []
   #- name: regcred
 
 
-# Predefined Affinity block
+# -- Predefined Affinity block
 affinityPreset:
-  enabled: false # disable presets by default
-  # Pod affinity preset
+  # -- disable presets by default
+  enabled: false
+  # -- Pod affinity preset
   # ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   # Allowed values: soft, hard, nil (nil means disabling)
   podAffinityType: soft
-  # Pod anti-affinity preset
+  # -- Pod anti-affinity preset
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   # Allowed values: soft, hard, nil (nil means disabling)
   podAntiAffinityType: soft
   
-  # Node affinity preset
+  # -- Node affinity preset
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
   nodeAffinity:
-    # Node affinity type
+    # -- Node affinity type
     # Allowed values: soft, hard, nil (nil means disabling)
     type: "soft"
-    # Node label key to match
+    # -- Node label key to match
     # E.g.
     # key: "kubernetes.io/e2e-az-name"
     key: "topology.kubernetes.io/zone"
-    # Node label values to match
+    # -- Node label values to match
     # E.g.
     # values:
     #   - e2e-az1
@@ -137,24 +161,30 @@ affinityPreset:
     #  - asia-southeast1-b
     #  - asia-southeast1-c
 
-# affinity override affinityPreset
+# -- It overrides affinityPreset
 affinity: {}
 
-
+# -- Default serviceAccount for all workloads
 serviceAccountName: ""
 
+# -- Change host aliases inside pods
 hostAliases: []
+
+# -- Change dns policy inside pods
 dnsPolicy: []
 
-
+# -- volumes for all workloads
 volumes: []
 #- name: cache
 #  emptyDir: {}
 
+# -- Clean yaml spec for volumes
 extraVolumes: []
+
+# -- Typed volume mounts
 volumeMounts: []
 
-# diagnosticMode works with all defined containers
+# -- diagnosticMode works with all defined containers
 diagnosticMode:
   enabled: false
   command: ["sleep"]
@@ -167,44 +197,57 @@ diagnosticMode:
 #  ██    ██ ██      ██  ██ ██ ██      ██   ██ ██   ██ ██           ██
 #   ██████  ███████ ██   ████ ███████ ██   ██ ██   ██ ███████ ███████
 
+# -- General for deployment
 deploymentsGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
 
+# -- General for statefulSet
 statefulSetsGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
+
+# -- General for daemonSet
 daemonSetsGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
+
+# -- General for cron
 cronJobsGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
+
+# -- General for jobs
 jobsGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
+# -- General for helm-hook job
 hooksGeneral:
   #  envSecrets: [envs]
   envConfigmaps: [ envs ]
 
+# -- General for serviceAccountGeneral
 serviceAccountGeneral: {}
+# -- General for pdb
 pdbsGeneral: {}
+# -- General for pvc
 pvcsGeneral: {}
-
+# -- General for serviceMonitor
 serviceMonitorsGeneral: {}
-#  annotations:
-#    test: test2
-#serviceAccount: {}
-#  my:
-#    annotations:
-#      bla-bla: key
+# -- General for podMonitors
+podMonitorsGeneral: {}
+# -- General for alert
 alertsGeneral: {}
-
+# -- General for networkPolicy
 networkPoliciesGeneral: {}
+# -- General for ingressesGeneral
 ingressesGeneral: {}
+# -- General for service
 servicesGeneral: {}
+# -- General for gateway
 gatewaysGeneral: {}
-
+# -- General for argocd app
+argocdAppsGeneral: {}
 
 #   ██████  ██████  ██      ██      ███████  ██████ ████████ ██  ██████  ███    ██ ███████
 #  ██      ██    ██ ██      ██      ██      ██         ██    ██ ██    ██ ████   ██ ██
@@ -212,6 +255,7 @@ gatewaysGeneral: {}
 #  ██      ██    ██ ██      ██      ██      ██         ██    ██ ██    ██ ██  ██ ██      ██
 #   ██████  ██████  ███████ ███████ ███████  ██████    ██    ██  ██████  ██   ████ ███████
 
+# -- Collection of deployment
 deployments: {}
 #  nginx:
 #    labels: {}
@@ -267,8 +311,11 @@ deployments: {}
 #    - name: app-data
 #      type: pvc
 
+# -- Collection of statefulSets
 statefulSets: {}
+# -- Collection of  daemonSets
 daemonSets: {}
+# -- Collection of crons
 cronJobs: {}
 #  generate-data:
 #    schedule: "*/5 * * * *"
@@ -291,12 +338,15 @@ cronJobs: {}
 #    schedule: "*/5 * * * *"
 #    command: "php yii crontab/auto-sender"
 
+
+# -- Collection of jobs
 jobs: {}
 #  refresh-cache:
 #    command: "php yii crontab/refresh-cache"
 #    commandDurationAlert: 30
 #    commandMaxDuration: 60
 
+# -- Collection of helm hooks jobs
 hooks: {}
 #  migration-up:
 #    containers:
@@ -307,14 +357,16 @@ hooks: {}
 #      - secretRef:
 #          name: server-env
 
-# It will create secrets
+# -- This Collection will create secrets
 imagePullSecrets: {}
 #  registry.org: |
 #    {"auths":{"registry.org":{"auth":"<base64>"}}}
 #  registry.org-rw: b64:$({"auths":{"registry.org":{"auth":"<base64>"}}} | base64)
 
 
+# -- Collection of ConfigMaps
 configMaps:
+  # -- envs
   envs:
     enabled: true
   #some-cm:
@@ -328,6 +380,7 @@ configMaps:
   #     "arg": "value"
   #   }
 
+# -- Collection of Secrets
 secrets: {}
   # # --set "secrets.secret-file.data.api\.key=$SOME_ENV"
   #secret-file:
@@ -354,15 +407,20 @@ secrets: {}
   #   data:
   #     file.json: {"arg": "value"}
 
+# -- Collection of vaults envs can conflict with secrets collection
 vaults: {}
 #  envs:
 #    store: my-secret-store
 #    path: secret/hello/world
 #    revision: 1
 
+# -- Collection of AWS Secret Manager
 awssm: {}
+
+# -- Collection of AWS secrets
 awsps: {}
 
+# -- Collection of serviceAccounts
 serviceAccount: {}
 #  firstaccount:
 #    role:
@@ -394,11 +452,16 @@ serviceAccount: {}
 #        resources: ["crontabs"]
 #        verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
+
+# -- Collection of pdb, can match with workloads with the same name
 pdbs: {}
 #  app:
 #    minAvailable: 1
 
-# All PVSs will be added to `volumes` block in each workload excluding hooks
+# -- Collection of priorityClasses
+priorityClasses: {}
+
+# -- All PVSs will be added to `volumes` block in each workload excluding hooks
 pvcs: {}
 #  app-data:
 #    accessModes:
@@ -406,11 +469,19 @@ pvcs: {}
 #    - ReadWriteMany
 #    size: 8Gi
 
+# -- Collection of hpa, can match with workloads with the same name
 hpas: {}
+
+# -- Collection of vpa, can match with workloads with the same name
 vpas: {}
+
+# -- Collection of keda, can match with workloads with the same name
 kedas: {}
 
+# -- Collection of alert, It's prometheus rule.
 alerts: {}
+
+# -- Collection of serviceMonitor, It's prometheus service monitor.
 serviceMonitors: {}
 #  app-sm:
 #    endpoints:
@@ -422,6 +493,10 @@ serviceMonitors: {}
 #    labels:
 #      foo: foo
 
+# -- Collection of podMonitor, It's prometheus pod monitor.
+podMonitors: {}
+
+# -- Collection of networkPolicy, It's Firewall rules
 networkPolicies: {}
 #  allow-internal-ns-metrics:
 #    ingress:
@@ -433,7 +508,8 @@ networkPolicies: {}
 #              matchLabels:
 #                name: "{{ .Release.Namespace }}"
 
-services:
+# -- Collection of service
+services: {}
 #  8080: {} # create 8080 ClusterIP
 #  nginx:
 #    clusterIP: None
@@ -444,6 +520,7 @@ services:
 #    selectorLabels:
 #      app: my-nginx
 
+# -- Collection of ingress
 ingresses: {}
 #  nixys.ru:
 #    annotations:
@@ -473,9 +550,19 @@ ingresses: {}
 #      - nixys.org
 #      secretName: "nixys-tls"
 
+# -- Collection of gateway
 gateways: {}
 
+# -- Collection of resourceQuotas
 resourceQuotas: {}
 
-argocdAppsGeneral: {}
+# -- Collection of  LimitRanges
+limitRanges: {}
+
+# -- Collection of ArgoCD application
 argocdApps: {}
+# -- Collection of ArgoCD application sets
+argocdAppSets: {}
+
+# -- Collection of Vault secret stores
+vaultStores: {}

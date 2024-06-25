@@ -6,7 +6,7 @@
 ---
 apiVersion: {{ .apiVersion | default "argoproj.io/v1alpha1" }}
 kind: ApplicationSet
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   # TODO: would u extend here?
   {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 2 }}

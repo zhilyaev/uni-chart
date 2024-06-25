@@ -6,7 +6,7 @@
 ---
 apiVersion: {{ .apiVersion | default "monitoring.coreos.com/v1" }}
 kind: PrometheusRule
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- . | toYaml | nindent 2 }}
 {{- end -}}

@@ -58,9 +58,8 @@
   {{- with .ports }}
   ports: {{- include "helpers.tpl" ( dict "value" . "context" $) | nindent 2 }}
   {{- end }}
-  {{- with .resources }}
-  resources: {{- include "helpers.tpl" ( dict "value" . "context" $) | nindent 4 }}
-  {{- end }}
+
+  {{- include "helpers.obj.resources" (dict "value" . "context" $) | nindent 2 }}
   {{- include "helpers.obj.volumeMounts" (dict "value" . "context" $) | nindent 2 }}
 {{- end }}
 {{- end }}

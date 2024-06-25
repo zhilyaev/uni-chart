@@ -6,7 +6,7 @@
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   accessModes: {{- include "helpers.tpl" ( dict "value" .accessModes "context" $ ) | nindent 4 }}
   {{- with .volumeMode }}volumeMode: {{ . }}{{- end }}

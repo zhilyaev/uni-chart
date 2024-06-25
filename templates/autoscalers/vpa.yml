@@ -3,7 +3,7 @@
 ---
 apiVersion: {{ .apiVersion | default "autoscaling.k8s.io/v1" }}
 kind: VerticalPodAutoscaler
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- include "helpers.vpa.target" (dict "name" $name "scaleTargetRef" .scaleTargetRef "context" $) | nindent 2 }}
   updatePolicy:

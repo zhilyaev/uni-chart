@@ -23,7 +23,7 @@
 ---
 apiVersion: {{ include "common.capabilities.deployment.apiVersion" $ }}
 kind: Deployment
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- with .replicas }}
   replicas: {{ . }}

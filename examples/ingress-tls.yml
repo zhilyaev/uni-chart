@@ -1,0 +1,8 @@
+ingresses:
+  my.example.com:
+    certManager:
+      issuerName: letsencrypt-prod
+    path: /
+    serviceName: 8080
+    servicePort: 8080
+

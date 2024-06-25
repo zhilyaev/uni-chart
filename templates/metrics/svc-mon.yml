@@ -6,7 +6,7 @@
 ---
 apiVersion: {{ .apiVersion | default "monitoring.coreos.com/v1" }}
 kind: ServiceMonitor
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   endpoints:
     {{- include "helpers.tpl" (dict "value" .endpoints "context" $) | nindent 4 }}

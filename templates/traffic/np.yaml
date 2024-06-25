@@ -6,7 +6,7 @@
 ---
 apiVersion: {{ include "common.capabilities.networkPolicy.apiVersion" $ }}
 kind: NetworkPolicy
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   podSelector:
     matchLabels:

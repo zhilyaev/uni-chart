@@ -23,7 +23,7 @@
 ---
 apiVersion: {{ include "common.capabilities.statefulSet.apiVersion" $ }}
 kind: StatefulSet
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- with .replicas }}
   replicas: {{ . | default 1 }}

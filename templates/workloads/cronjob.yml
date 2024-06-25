@@ -31,7 +31,7 @@
 ---
 apiVersion: {{ include "common.capabilities.cronjob.apiVersion" $ }}
 kind: CronJob
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   schedule: {{ include "helpers.tpl" (dict "value" .schedule "context" $) | quote }}
   {{ with .timeZone }}timeZone: {{ . }}{{- end }}

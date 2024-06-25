@@ -1,81 +1,113 @@
 # Global
 
 
-| Name                     | Description                                                                                        | Value |
-|--------------------------|----------------------------------------------------------------------------------------------------|-------|
-| `kubeVersion`            | Override Kubernetes version (1.25.0/1.18.0/etc)                                                    | `""`  |
-| `nameOverride`           | String to override release name                                                                    | `""`  |
-| `extra`                  | Map of extra objects (k8s manifests / Helm templates) to deploy with the release.                  | `[]`  |
-| `notes`                  | extra NOTES, what do you want to say after deploy?                                                 | `[]`  |
-| `annotations`            | Annotations to add to all deployed objects                                                         | `{}`  |
-| `labels`                 | Labels to add to all deployed objects                                                              | `{}`  |
-|                          |                                                                                                    |       |
-| **CONFIGURATIONS**       |                                                                                                    |       |
-| `envs`                   | Map of env variables which will be deployed as ConfigMap with name `RELEASE_NAME-envs`             | `{}`  |
-| `envsString`             | String with map of env variables which will be deployed as ConfigMap with name `RELEASE_NAME-envs` | `""`  |
-| `secretEnvs`             | Map of env variables which will be deployed as Secret with name `RELEASE_NAME-envs`                | `{}`  |
-| `secretEnvsString`       | String with map of env variables which will be deployed as Secret with name `RELEASE_NAME-envs`    | `""`  |
-|                          |                                                                                                    |       |
-| **WORKLOADS**            |                                                                                                    |       |
-| `podLabels`              | Labels to add to all deployed pods                                                                 | `{}`  |
-| `podAnnotations`         | Annotations to add to all deployed pods                                                            | `{}`  |
-| `selectorLabels`         | Extra `selectorLabels` to add to deployments and services                                          | `{}`  |
-| `priorityClassName`      | Default pods priorityClassName                                                                     | `""`  |
-| `image`                  | Default [image](#image) for all deployed containers                                                | `[]`  |
-| `affinityPreset`         | [Affinity Presets](#affinityPreset) for all workloads                                              | `[]`  |
-| `affinity`               | Your own affinity by default (it'll override affinityPreset)                                       | `{}`  |
-| `serviceAccountName`     | The name of the ServiceAccount to use by workload                                                  | `""`  |
-| `hostAliases`            | Pods host aliases to use by all workloads                                                          | `[]`  |
-| `dnsPolicy`              | DnsPolicy for all workloads                                                                        | `[]`  |
-| `volumes`                | Array of [typed volume](#volume) to add to all deployed workloads                                  | `[]`  |
-| `extraVolumes`           | Array of k8s volumes to add to all deployed workloads                                              | `[]`  |
-| `volumeMounts`           | Array of k8s volumeMounts to add to all deployed workloads                                         | `[]`  |
-| `diagnosticMode`         | [diagnosticMode](#diagnosticMode)                                                                  | `[]`  |
-|                          |                                                                                                    |       |
-| **GENERALS**             |                                                                                                    |       |
-| `deploymentsGeneral`     | General options for all [deployments](#deployment)                                                 | `{}`  |
-| `statefulSetsGeneral`    | General options for all [statefulSets](#statefulSet)                                               | `{}`  |
-| `daemonSetsGeneral`      | General options for all [daemonSets](#daemonSet)                                                   | `{}`  |
-| `cronJobsGeneral`        | General options for all [cronJobs](#cronJob)                                                       | `{}`  |
-| `jobsGeneral`            | General options for all [jobs](#job)                                                               | `{}`  |
-| `hooksGeneral`           | General options for all [job helm hooks](#hook)                                                    | `{}`  |
-| `serviceAccountGeneral`  | General options for all [serviceAccount](#serviceAccount)                                          | `{}`  |
-| `pdbsGeneral`            | General options for all [pdb](#pdb)                                                                | `{}`  |
-| `pvcsGeneral`            | General options for all [pvc](#pvc)                                                                | `{}`  |
-| `hpasGeneral`            | TODO: General options for all [hpa](#hpa)                                                          | `{}`  |
-| `serviceMonitorsGeneral` | General options for all [serviceMonitor](#serviceMonitor)                                          | `{}`  |
-| `alertsGeneral`          | General options for all [alert](#alert)                                                            | `{}`  |
-| `networkPoliciesGeneral` | General options for all [networkPolicies](#networkPolicies)                                        | `{}`  |
-| `servicesGeneral`        | General options for all [services](#service)                                                       | `{}`  |
-| `ingressesGeneral`       | General options for all [ingresses](#ingress)                                                      | `{}`  |
-| `gatewaysGeneral`        | General options for all [gateway](#gateway)                                                        | `{}`  |
-|                          |                                                                                                    |       |
-| **COLLECTIONS**          |                                                                                                    |       |
-| `deployments`            | Map of the [deployment](#deployment) parameters, where key is a name                               | `{}`  |
-| `statefulSets`           | Map of the [statefulSet](#statefulSet) parameters, where key is a name                             | `{}`  |
-| `daemonSets`             | Map of the [daemonSet](#daemonSet) parameters, where key is a name                                 | `{}`  |
-| `cronJobs`               | Map of the [cronJobs](#cronJob) parameters, where key is a name                                    | `{}`  |
-| `jobs`                   | Map of the [job](#job) parameters, where key is a name                                             | `{}`  |
-| `hooks`                  | Map of the [hook](#hook) parameters, where key is a name                                           | `{}`  |
-| `imagePullSecrets`       | Map of registry secrets in `.dockerconfigjson` format                                              | `{}`  |
-| `configMaps`             | Map of the [configMap](#configMap) parameters, where key is a name                                 | `{}`  |
-| `secrets`                | Map of the [secret](#secret) parameters, where key is a name                                       | `{}`  |
-| `vaults`                 | Map of the [vault](#vault) parameters, where key is a name                                         | `{}`  |
-| `awssm`                  | TODO: Map of the [awssm](#awssm) parameters, where key is a name                                   | `{}`  |
-| `awsps`                  | TODO: Map of the [awsps](#awsps) parameters, where key is a name                                   | `{}`  |
-| `serviceAccount`         | Map of the [serviceAccount](#serviceAccount) parameters, where key is a name                       | `{}`  |
-| `pdbs`                   | Map of the [pdb](#pdb) parameters, where key is a name                                             | `{}`  |
-| `pvcs`                   | Map of the [pvc](#pvc) parameters, where key is a name                                             | `{}`  |
-| `hpas`                   | Map of the [hpa](#hpa) parameters, where key is a name                                             | `{}`  |
-| `vpas`                   | TODO: Map of the [vpa](#vpa) parameters, where key is a name                                       | `{}`  |
-| `kedas`                  | Map of the [keda](#keda) parameters, where key is a name                                           | `{}`  |
-| `alerts`                 | Map of the [alert](#alert) parameters, where key is a name                                         | `{}`  |
-| `serviceMonitors`        | Map of the [serviceMonitor](#serviceMonitor) parameters, where key is a name                       | `{}`  |
-| `networkPolicies`        | Map of the [networkPolicy](#networkPolicy) parameters, where key is a name                         | `{}`  |
-| `services`               | Map of the [service](#service) parameters, where key is a name                                     | `{}`  |
-| `ingresses`              | Map of the [ingress](#ingress) parameters, where key is a name                                     | `{}`  |
-| `gateways`               | TODO: Map of the [gateway](#gateway) parameters, where key is a name                               | `{}`  |
-
+| Name                     | Description                                                                                                                                                                                                       | Value                  |
+|--------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| `kubeVersion`            | Override Kubernetes version (1.25.0/1.18.0/etc)                                                                                                                                                                   | `null`                 |
+| `nameOverride`           | String to override release name                                                                                                                                                                                   | `null`                 |
+| `extra`                  | Map of extra objects (k8s manifests / Helm templates) to deploy with the release.                                                                                                                                 | `{}`                   |
+| `notes`                  | extra NOTES, what do you want to say after deploy?                                                                                                                                                                | `"Successful deploy!"` |
+| `annotations`            | Annotations to add to all deployed objects                                                                                                                                                                        | `{}`                   |
+| `labels`                 | Labels to add to all deployed objects                                                                                                                                                                             | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| **CONFIGURATIONS**       | ==================================================================                                                                                                                                                |                        |
+| `envs`                   | Map of env variables which will be deployed as ConfigMap with name `RELEASE_NAME-envs`                                                                                                                            | `{}`                   |
+| `envsString`             | String with map of env variables which will be deployed as ConfigMap with name `RELEASE_NAME-envs`                                                                                                                | `""`                   |
+| `secretEnvs`             | Map of env variables which will be deployed as Secret with name `RELEASE_NAME-envs`                                                                                                                               | `{}`                   |
+| `secretEnvsString`       | String with map of env variables which will be deployed as Secret with name `RELEASE_NAME-envs`                                                                                                                   | `""`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| **WORKLOADS**            | ==================================================================                                                                                                                                                |                        |
+| `podLabels`              | Labels to add to all deployed pods                                                                                                                                                                                | `{}`                   |
+| `podAnnotations`         | Annotations to add to all deployed pods                                                                                                                                                                           | `{}`                   |
+| `selectorLabels`         | Extra `selectorLabels` to add to deployments and services                                                                                                                                                         | `{}`                   |
+| `priorityClassName`      | Default pods priorityClassName                                                                                                                                                                                    | `""`                   |
+| `image`                  | Default [image](#image) for all deployed containers                                                                                                                                                               | `[]`                   |
+| `affinityPreset`         | [Affinity Presets](#affinityPreset) for all workloads                                                                                                                                                             | `[]`                   |
+| `affinity`               | Your own affinity by default (it'll override affinityPreset)                                                                                                                                                      | `{}`                   |
+| `serviceAccountName`     | The name of the ServiceAccount to use by workload                                                                                                                                                                 | `""`                   |
+| `hostAliases`            | Pods host aliases to use by all workloads                                                                                                                                                                         | `[]`                   |
+| `dnsPolicy`              | DnsPolicy for all workloads                                                                                                                                                                                       | `[]`                   |
+| `volumes`                | Array of [typed volume](#volume) to add to all deployed workloads                                                                                                                                                 | `[]`                   |
+| `extraVolumes`           | Array of k8s volumes to add to all deployed workloads                                                                                                                                                             | `[]`                   |
+| `volumeMounts`           | Array of k8s volumeMounts to add to all deployed workloads                                                                                                                                                        | `[]`                   |
+| `diagnosticMode`         | [diagnosticMode](#diagnosticMode)                                                                                                                                                                                 | `[]`                   |
+| `resourcesPreset`        | Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if resources is set (resources is recommended for production). | `none`                 |
+| `resources`              | The resources requests and limits for container                                                                                                                                                                   | `{}`                   ||                          |                                                                                                    |                        |
+|                          |                                                                                                                                                                                                                   |                        |
+| **GENERALS**             | ==================================================================                                                                                                                                                |                        |
+| WORKLOADS                |                                                                                                                                                                                                                   |                        |
+| `deploymentsGeneral`     | General options for all [deployments](#deployment)                                                                                                                                                                | `{}`                   |
+| `statefulSetsGeneral`    | General options for all [statefulSets](#statefulSet)                                                                                                                                                              | `{}`                   |
+| `daemonSetsGeneral`      | General options for all [daemonSets](#daemonSet)                                                                                                                                                                  | `{}`                   |
+| `cronJobsGeneral`        | General options for all [cronJobs](#cronJob)                                                                                                                                                                      | `{}`                   |
+| `jobsGeneral`            | General options for all [jobs](#job)                                                                                                                                                                              | `{}`                   |
+| `hooksGeneral`           | General options for all [job helm hooks](#hook)                                                                                                                                                                   | `{}`                   |
+| `serviceAccountGeneral`  | General options for all [serviceAccount](#serviceAccount)                                                                                                                                                         | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| POLICIES                 |                                                                                                                                                                                                                   |                        |
+| `pdbsGeneral`            | General options for all [pdb](#pdb)                                                                                                                                                                               | `{}`                   |
+| `pvcsGeneral`            | General options for all [pvc](#pvc)                                                                                                                                                                               | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| METRICS                  |                                                                                                                                                                                                                   |                        |
+| `serviceMonitorsGeneral` | General options for all [serviceMonitor](#serviceMonitor)                                                                                                                                                         | `{}`                   |
+| `alertsGeneral`          | General options for all [alert](#alert)                                                                                                                                                                           | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| TRAFFIC                  |                                                                                                                                                                                                                   |                        |
+| `networkPoliciesGeneral` | General options for all [networkPolicies](#networkPolicies)                                                                                                                                                       | `{}`                   |
+| `servicesGeneral`        | General options for all [services](#service)                                                                                                                                                                      | `{}`                   |
+| `ingressesGeneral`       | General options for all [ingresses](#ingress)                                                                                                                                                                     | `{}`                   |
+| `gatewaysGeneral`        | General options for all [gateway](#gateway)                                                                                                                                                                       | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| ARGO                     |                                                                                                                                                                                                                   |                        |
+| `argocdAppsGeneral`      | General options for all [argocdApps](#argocdApps)                                                                                                                                                                 | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| **COLLECTIONS**          | ==================================================================                                                                                                                                                |                        |
+| `namespaces`             | Map of [namespace](#namespace)                                                                                                                                                                                    | `{}`                   |
+| `pvcs`                   | Map of the [pvc](#pvc) parameters, where key is a name                                                                                                                                                            | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| WORKLOADS                |                                                                                                                                                                                                                   |                        |
+| `deployments`            | Map of the [deployment](#deployment) parameters, where key is a name                                                                                                                                              | `{}`                   |
+| `statefulSets`           | Map of the [statefulSet](#statefulSet) parameters, where key is a name                                                                                                                                            | `{}`                   |
+| `daemonSets`             | Map of the [daemonSet](#daemonSet) parameters, where key is a name                                                                                                                                                | `{}`                   |
+| `cronJobs`               | Map of the [cronJobs](#cronJob) parameters, where key is a name                                                                                                                                                   | `{}`                   |
+| `jobs`                   | Map of the [job](#job) parameters, where key is a name                                                                                                                                                            | `{}`                   |
+| `hooks`                  | Map of the [hook](#hook) parameters, where key is a name                                                                                                                                                          | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| CONFIGURATION            |                                                                                                                                                                                                                   |                        |
+| `imagePullSecrets`       | Map of registry secrets in `.dockerconfigjson` format                                                                                                                                                             | `{}`                   |
+| `configMaps`             | Map of the [configMap](#configMap) parameters, where key is a name                                                                                                                                                | `{}`                   |
+| `secrets`                | Map of the [secret](#secret) parameters, where key is a name                                                                                                                                                      | `{}`                   |
+| `vaults`                 | Map of the [vault](#vault) parameters, where key is a name                                                                                                                                                        | `{}`                   |
+| `awssm` (todo)           | Map of the [awssm](#awssm) parameters, where key is a name                                                                                                                                                        | `{}`                   |
+| `awsps` (todo)           | Map of the [awsps](#awsps) parameters, where key is a name                                                                                                                                                        | `{}`                   |
+| `serviceAccount`         | Map of the [serviceAccount](#serviceAccount) parameters, where key is a name                                                                                                                                      | `{}`                   |
+| `vaultStores`            | Maps of [vault stores](#vaultStores)                                                                                                                                                                              | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| POLICIES                 |                                                                                                                                                                                                                   |                        |
+| `pdbs`                   | Map of the [pdb](#pdb) parameters, where key is a name                                                                                                                                                            | `{}`                   |
+| `limitRanges`            | Map of the [limitRange](#limitRange) parameters                                                                                                                                                                   | `{}`                   |
+| `resourceQuotas`         | Map of the [resourceQuota](#resourceQuota) parameters                                                                                                                                                             | `{}`                   |
+| `priorityClasses`        | Map of the [priorityClass](#priorityClasses) parameters, where key is a name                                                                                                                                      | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| AUTOSCALERS              |                                                                                                                                                                                                                   |                        |
+| `hpas`                   | Map of the [hpa](#hpa) parameters, where key is a name                                                                                                                                                            | `{}`                   |
+| `vpas`                   | TODO: Map of the [vpa](#vpa) parameters, where key is a name                                                                                                                                                      | `{}`                   |
+| `kedas`                  | Map of the [keda](#keda) parameters, where key is a name                                                                                                                                                          | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| METRICS                  |                                                                                                                                                                                                                   |                        |
+| `alerts`                 | Map of the [alert](#alert) parameters, where key is a name                                                                                                                                                        | `{}`                   |
+| `serviceMonitors`        | Map of the [serviceMonitor](#serviceMonitor) parameters, where key is a name                                                                                                                                      | `{}`                   |
+| `podMonitors`            | Map of the [podeMonitor](#podMonitor) parameters, where key is a name                                                                                                                                             | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| TRAFFIC                  |                                                                                                                                                                                                                   |                        |
+| `networkPolicies`        | Map of the [networkPolicy](#networkPolicy) parameters, where key is a name                                                                                                                                        | `{}`                   |
+| `services`               | Map of the [service](#service) parameters, where key is a name                                                                                                                                                    | `{}`                   |
+| `ingresses`              | Map of the [ingress](#ingress) parameters, where key is a name                                                                                                                                                    | `{}`                   |
+| `gateways`               | Map of the [gateway](#gateway) parameters, where key is a name                                                                                                                                                    | `{}`                   |
+|                          |                                                                                                                                                                                                                   |                        |
+| ARGO                     |                                                                                                                                                                                                                   |                        |
+| `argocdApps`             | Map of the [argocdApps](#argocdApps) parameters, where key is a name                                                                                                                                              | `{}`                   |
+| `argocdAppSets`          | Map of the [argocdAppSets](#argocdAppSets) parameters, where key is a name                                                                                                                                        | `{}`                   |
 
 # Objects
 
@@ -92,55 +124,55 @@
 
 ## `container`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#container-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#container-v1-core
 
-| Name                | Description                                                                                                                | Value |
-|---------------------|----------------------------------------------------------------------------------------------------------------------------|-------|
-| `name`              | The name of the container                                                                                                  | `""`  |
-| `image`             | [image](#image)                                                                                                            | `{}`  |
-| `securityContext`   | Security Context for container                                                                                             | `{}`  |
-| `command`           | Container command override (list or string)                                                                                | `[]`  |
-| `args`              | Container arguments override                                                                                               | `[]`  |
-| `env`               | Array of extra environment variables                                                                                       | `[]`  |
-| `envsFromConfigmap` | Map of ConfigMaps and envs from it                                                                                         | `{}`  |
-| `envsFromSecret`    | Map of Secrets and envs from it                                                                                            | `{}`  |
-| `envConfigmaps`     | Array of Configmaps names with extra envs                                                                                  | `[]`  |
-| `envSecrets`        | Array of Secrets names with extra envs                                                                                     | `[]`  |
-| `envFrom`           | Array of extra envFrom objects                                                                                             | `[]`  |
-| `ports`             | Array of ports to be exposed from container                                                                                | `[]`  |
-| `lifecycle`         | Containers lifecycle hooks                                                                                                 | `{}`  |
-| `livenessProbe`     | Liveness probe object for container                                                                                        | `{}`  |
-| `readinessProbe`    | Readiness probe object for container                                                                                       | `{}`  |
-| `resources`         | The resources requests and limits for container                                                                            | `{}`  |
-| `volumeMounts`      | Array of the [k8s Volume mounts](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#volumemount-v1-core) | `[]`  |
-| `diagnosticMode`    | TODO: [diagnosticMode](#diagnosticMode)                                                                                    | `[]`  |
+| Name                | Description                                                                                                                                                                                                                                 | Value  |
+|---------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| `name`              | The name of the container                                                                                                                                                                                                                   | `""`   |
+| `image`             | [image](#image)                                                                                                                                                                                                                             | `{}`   |
+| `securityContext`   | Security Context for container                                                                                                                                                                                                              | `{}`   |
+| `command`           | Container command override (list or string)                                                                                                                                                                                                 | `[]`   |
+| `args`              | Container arguments override                                                                                                                                                                                                                | `[]`   |
+| `diagnosticMode`    | Set command for all container [diagnosticMode](#diagnosticMode)                                                                                                                                                                             | `{}`   |
+| `env`               | Array of extra environment variables                                                                                                                                                                                                        | `[]`   |
+| `envsFromConfigmap` | Map of ConfigMaps and envs from it                                                                                                                                                                                                          | `{}`   |
+| `envsFromSecret`    | Map of Secrets and envs from it                                                                                                                                                                                                             | `{}`   |
+| `envConfigmaps`     | Array of Configmaps names with extra envs                                                                                                                                                                                                   | `[]`   |
+| `envSecrets`        | Array of Secrets names with extra envs                                                                                                                                                                                                      | `[]`   |
+| `envFrom`           | Array of extra envFrom objects                                                                                                                                                                                                              | `[]`   |
+| `ports`             | Array of ports to be exposed from container                                                                                                                                                                                                 | `[]`   |
+| `lifecycle`         | Containers lifecycle hooks                                                                                                                                                                                                                  | `{}`   |
+| `livenessProbe`     | Liveness probe object for container                                                                                                                                                                                                         | `{}`   |
+| `readinessProbe`    | Readiness probe object for container                                                                                                                                                                                                        | `{}`   |
+| `volumeMounts`      | Array of the [k8s Volume mounts](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#volumemount-v1-core)                                                                                                                  | `[]`   |
 
 ## `pod`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#pod-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#pod-v1-core
 
-| Name                            | Description                                                   | Value |
-|---------------------------------|---------------------------------------------------------------|-------|
-| `name`                          | The default name for containers                               | `""`  |
-| `image`                         | Default [image](#image)   for all deployed containers         | `[]`  |
-| `affinity`                      | Your own affinity                                             | `""`  |
-| `serviceAccountName`            | The name of the ServiceAccount to use                         | `""`  |
-| `hostAliases`                   | Pods host aliases                                             | `[]`  |
-| `priorityClassName`             | Pods priorityClassName                                        | `""`  |
-| `securityContext`               | Security Context for pods                                     | `{}`  |
-| `terminationGracePeriodSeconds` | terminationGracePeriodSeconds for pods                        | `{}`  |
-| `dnsPolicy`                     | DnsPolicy pods                                                | `""`  |
-| `nodeSelector`                  | Node labels for pods assignment                               | `{}`  |
-| `tolerations`                   | Tolerations for pods assignment                               | `[]`  |
-| `initContainers`                | Array of the initContainers ([container](#container) objects) | `[]`  |
-| `containers`                    | Array of the containers ([container](#container) objects)     | `[]`  |
-| `volumes`                       | Array of [typed volumes](#volume)                             | `[]`  |
-| `extraVolumes`                  | Array of k8s Volumes                                          | `[]`  |
-| `volumeMounts`                  | Array of k8s volumeMounts                                     | `[]`  |
+| Name                            | Description                                                                                                                                                                                                                                 | Value  |
+|---------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------|
+| `name`                          | The default name for containers                                                                                                                                                                                                             | `""`   |
+| `image`                         | Default [image](#image)   for all deployed containers                                                                                                                                                                                       | `[]`   |
+| `affinity`                      | Your own affinity                                                                                                                                                                                                                           | `""`   |
+| `serviceAccountName`            | The name of the ServiceAccount to use                                                                                                                                                                                                       | `""`   |
+| `hostAliases`                   | Pods host aliases                                                                                                                                                                                                                           | `[]`   |
+| `priorityClassName`             | Pods priorityClassName                                                                                                                                                                                                                      | `""`   |
+| `securityContext`               | Security Context for pods                                                                                                                                                                                                                   | `{}`   |
+| `terminationGracePeriodSeconds` | terminationGracePeriodSeconds for pods                                                                                                                                                                                                      | `{}`   |
+| `dnsPolicy`                     | DnsPolicy pods                                                                                                                                                                                                                              | `""`   |
+| `nodeSelector`                  | Node labels for pods assignment                                                                                                                                                                                                             | `{}`   |
+| `tolerations`                   | Tolerations for pods assignment                                                                                                                                                                                                             | `[]`   |
+| `initContainers`                | Array of the initContainers ([container](#container) objects)                                                                                                                                                                               | `[]`   |
+| `containers`                    | Array of the containers ([container](#container) objects)                                                                                                                                                                                   | `[]`   |
+| `volumes`                       | Array of [typed volumes](#volume)                                                                                                                                                                                                           | `[]`   |
+| `extraVolumes`                  | Array of k8s Volumes                                                                                                                                                                                                                        | `[]`   |
+| `volumeMounts`                  | Array of k8s volumeMounts                                                                                                                                                                                                                   | `[]`   |
+| `resourcesPreset`               | Set container resources according to one common preset (allowed values: none, nano, micro, small, medium, large, xlarge, 2xlarge). This is ignored if provisioning.resources is set (provisioning.resources is recommended for production). | `none` |
 
 ## `job`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#job-v1-batch
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#job-v1-batch
 
 | Name                      | Description                                          | Value     |
 |---------------------------|------------------------------------------------------|-----------|
@@ -160,7 +192,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#job-
 
 ## `cronJob`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#cronjob-v1-batch
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#cronjob-v1-batch
 
 | Name                         | Description                          | Value     |
 |------------------------------|--------------------------------------|-----------|
@@ -176,7 +208,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#cron
 
 ## `daemonSet`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#daemonset-v1-apps
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#daemonset-v1-apps
 
 
 | Name              | Description                          | Value  |
@@ -194,7 +226,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#daem
 
 ## `deployment`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#deploymentspec-v1-apps
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#deploymentspec-v1-apps
 
 | Name                      | Description                            | Value  |
 |---------------------------|----------------------------------------|--------|
@@ -212,7 +244,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#depl
 
 ## `statefulSet`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#statefulset-v1-apps
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#statefulset-v1-apps
 
 
 | Name                  | Description                           | Value  |
@@ -266,7 +298,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#stat
 
 ## `configMap`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#configmap-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#configmap-v1-core
 
 | Name          | Description                 | Value  |
 |---------------|-----------------------------|--------|
@@ -277,7 +309,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#conf
 
 ## `secret`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#secret-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#secret-v1-core
 
 Secret `data` object is a map where value can be a string, json or base64 encoded string with prefix `b64:`.
 
@@ -296,14 +328,15 @@ First, you need to install [External Secret Operator](https://github.com/externa
 Works only with kv engine. 
 SecretStore should be defined already.
 
-| Name          | Description                                                                         | Value  |
-|---------------|-------------------------------------------------------------------------------------|--------|
-| `enabled`     | Enable/disable                                                                      | `true` |
-| `annotations` | Extra annotations                                                                   |        |
-| `labels`      | Extra labels                                                                        |        |
-| `store`       | Required [store name](https://external-secrets.io/latest/provider/hashicorp-vault/) |        |
-| `path`        | Required path to vault raw data                                                     |        |
-| `revision`    | KV2 revision of secret                                                              |        |
+| Name              | Description                                                                         | Value  |
+|-------------------|-------------------------------------------------------------------------------------|--------|
+| `enabled`         | Enable/disable                                                                      | `true` |
+| `annotations`     | Extra annotations                                                                   |        |
+| `labels`          | Extra labels                                                                        |        |
+| `store`           | Required [store name](https://external-secrets.io/latest/provider/hashicorp-vault/) |        |
+| `path`            | Required path to vault raw data                                                     |        |
+| `revision`        | KV2 revision of secret                                                              |        |
+| `refreshInterval` | interval for updating vault value                                                   | `60s`  |
 
 ## `awssm`
 
@@ -344,7 +377,7 @@ Specs: https://keda.sh/docs/2.11/concepts/scaling-deployments/#scaledobject-spec
 
 ## `hpa`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#horizontalpodautoscalerspec-v1-autoscaling
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#horizontalpodautoscalerspec-v1-autoscaling
 
 | Name             | Description                              | Value  |
 |------------------|------------------------------------------|--------|
@@ -429,7 +462,7 @@ Specs: https://github.com/prometheus-operator/prometheus-operator/blob/main/Docu
 
 ## `pdb`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#poddisruptionbudgetspec-v1-policy
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#poddisruptionbudgetspec-v1-policy
 
 | Name             | Description                                     | Value  |
 |------------------|-------------------------------------------------|--------|
@@ -442,7 +475,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#podd
 
 ## `pvc`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#persistentvolumeclaimspec-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#persistentvolumeclaimspec-v1-core
 
 | Name               | Description                                          | Value          |
 |--------------------|------------------------------------------------------|----------------|
@@ -486,7 +519,7 @@ Combined with RBAC objects
 
 ## `service`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#servicespec-v1-core
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#servicespec-v1-core
 
 | Name                       | Description                                                       | Value         |
 |----------------------------|-------------------------------------------------------------------|---------------|
@@ -516,7 +549,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#serv
 
 ## `ingress`
 
-Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#ingressspec-v1-networking-k8s-io
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#ingressspec-v1-networking-k8s-io
 
 | Name                     | Description                                                                                             | Value              |
 |--------------------------|---------------------------------------------------------------------------------------------------------|--------------------|
@@ -525,10 +558,10 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#ingr
 | `annotations`            | Extra annotations for ingress                                                                           | `{}`               |
 | `certManager.issuerName` | CertManager issuer name for ingress TLS                                                                 | `""`               |
 | `certManager.issuerType` | CertManager issuer type for ingress TLS                                                                 | `"cluster-issuer"` |
+| `certManager.tlsName`    | The name of secret to use for CertManager generated TLS                                                 | `""`               |
 | `ingressClassName`       | The name of ingressClass to use                                                                         | `""`               |
-| `tlsName`                | The name of secret to use for CertManager generated TLS                                                 | `""`               |
-| `hosts`                  | Array of the ingress hosts objects                                                                      | `[]`               |
-| `tls`                    | Array of the ingress [tls params](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) | `[]`               | 
+| `hosts`                  | Array of the ingress [hosts](#hosts) objects                                                            | `[]`               |
+| `tls`                    | Array of the ingress [tls params](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) | `[]`               |
 
 
 ### `hosts`
@@ -546,4 +579,102 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#ingr
 | `pathType`    | Type of the ingress path [see for details](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types) | `"Prefix"` |
 | `serviceName` | Name of the service to route requests                                                                                   | `""`       |
 | `servicePort` | Name or number of the service port to route requests                                                                    |            |
+
+
+## `namespace`
+
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#namespace-v1-core
+
+| Name          | Description                     | Value |
+|---------------|---------------------------------|-------|
+| `name`        | Custom name of the namespace    | `""`  |
+| `labels`      | Extra labels for namespace      | `{}`  |
+| `annotations` | Extra annotations for namespace | `{}`  |
+
+
+## `limitRange`
+
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#limitrangespec-v1-core
+
+| Name          | Description       | Value |
+|---------------|-------------------|-------|
+| `name`        | Custom name       | `""`  |
+| `labels`      | Extra labels      | `{}`  |
+| `annotations` | Extra annotations | `{}`  |
+| `limits`      | limit             | `{}`  |
+
+
+## `resourceQuota`
+
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#resourcequotaspec-v1-core
+
+| Name          | Description         | Value |
+|---------------|---------------------|-------|
+| `name`        | Custom name         | `""`  |
+| `labels`      | Extra labels        | `{}`  |
+| `annotations` | Extra annotations   | `{}`  |
+| `hard`        | spec of hard quotas | `{}`  |
+
+
+## `vaultStores`
+
+Specs: https://external-secrets.io/latest/api/secretstore/
+
+| Name                 | Description             | Value                               |
+|----------------------|-------------------------|-------------------------------------|
+| `name`               | Custom name             | `""`                                |
+| `labels`             | Extra labels            | `{}`                                |
+| `annotations`        | Extra annotations       | `{}`                                |
+| `server`             | url for vault server    | `""`                                |
+| `path`               | vault mountPath role    | `""`                                |
+| `serviceAccountName` | serviceAccount for role | `{{ $.Values.serviceAccountName }}` |
+| `refreshInterval`    | refresh interval        | `60`                                |
+
+## `argocdApps`
+
+> useful app for apps
+
+
+| Name          | Description             | Value  |
+|---------------|-------------------------|--------|
+| `name`        | Custom name             | `""`   |
+| `labels`      | Extra labels            | `{}`   |
+| `annotations` | Extra annotations       | `{}`   |
+| `finalizers`  | Extra finalizers        | `{}`   |
+| `project`     | project name            | `nill` |
+| `destination` | destination k8s cluster | `{}`   |
+| `info`        | notification settings   | `{}`   |
+| `syncPolicy`  | syncPolicy pruning      | `{}`   |
+| `sources`     | can be item or slice    | `{}`   |
+
+## `argocdAppSets`
+
+> useful app for apps
+
+
+| Name          | Description             | Value  |
+|---------------|-------------------------|--------|
+| `name`        | Custom name             | `""`   |
+| `labels`      | Extra labels            | `{}`   |
+| `annotations` | Extra annotations       | `{}`   |
+| `finalizers`  | Extra finalizers        | `{}`   |
+| `project`     | project name            | `nill` |
+| `destination` | destination k8s cluster | `{}`   |
+| `info`        | notification settings   | `{}`   |
+| `syncPolicy`  | syncPolicy pruning      | `{}`   |
+| `sources`     | can be item or slice    | `{}`   |
+
+## `priorityClass`
+
+Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#priorityclass-v1-scheduling-k8s-io
+
+| Name          | Description                                              | Value   |
+|---------------|----------------------------------------------------------|---------|
+| `name`        | Custom name                                              | `""`    |
+| `labels`      | Extra labels                                             | `{}`    |
+| `annotations` | Extra annotations                                        | `{}`    |
+| `finalizers`  | Extra finalizers                                         | `{}`    |
+| `value`       | Int value prior                                          | `0`     |
+| `preemption`  | set policy                                               | `{}`    |
+| `default`  | set as default (only 1 default is available per cluster) | `false` |
 

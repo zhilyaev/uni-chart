@@ -3,7 +3,7 @@
 ---
 apiVersion: v1
 kind: ResourceQuota
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   hard:
     {{- include "helpers.obj.selectorLabels" (dict "value" .hard "context" $) | nindent 4 }}

@@ -1,0 +1,13 @@
+{{- range $name, $i := .Values.priorityClasses }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
+value: {{ .value }}
+{{- with .preemption }}
+preemptionPolicy: {{ . }}
+{{- end }}
+globalDefault: {{ .default | default "false" }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,22 @@
+{{- range $name, $i := .Values.vaultStores }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: {{ .apiVersion | default "external-secrets.io/v1beta1" }}
+kind: SecretStore
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
+spec:
+  {{- with refreshInterval }}
+  refreshInterval: {{ . }}
+  {{- end }}
+  provider:
+    vault:
+      server: {{ .server }}
+      version: v2
+      auth:
+        kubernetes:
+          mountPath: {{ .path }}
+          role: {{ $name }}
+          serviceAccountRef:
+            name: {{- include "helpers.tpl" (dict "value" (.serviceAccountName | default $.Values.serviceAccountName) "context" $) }}
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,13 @@
+ingresses:
+  my-ingress-name:
+    path: /
+    serviceName: 8080
+    servicePort: 8080
+    hosts:
+      - my.example.com
+      - abc.example.com
+      - foo.bar.com
+
+services:
+  8080:
+    enabled: true

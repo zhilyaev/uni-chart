@@ -1,0 +1,9 @@
+ingresses:
+  my.example.com:
+    path: /
+    serviceName: 8080
+    servicePort: 8080
+
+services:
+  8080:
+    enabled: true

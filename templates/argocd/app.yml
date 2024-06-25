@@ -6,7 +6,7 @@
 ---
 apiVersion: {{ .apiVersion | default "argoproj.io/v1alpha1" }}
 kind: Application
-{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+{{ include "obj.metadata" (dict "name" (.name | default $name) "value" . "context" $) }}
 spec:
   {{- with .project }}
   project: {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 2 }}
