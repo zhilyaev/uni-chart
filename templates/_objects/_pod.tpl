@@ -17,13 +17,13 @@ affinity: {{- include "helpers.tpl" ( dict "value" .affinity "context" $) | nind
 {{- else if $.Values.affinityPreset.enabled }}
 affinity:
   {{- if $.Values.affinityPreset.podAffinityType }}
-    podAffinity: {{- include "helpers.affinities.pods" (dict "type" $.Values.affinityPreset.podAffinityType "extraLabels" .selectorLabels "context" $) | nindent 4 }}
+    podAffinity: {{- include "helpers.affinities.pods" (dict "type" $.Values.affinityPreset.podAffinityType "extraLabels" .selectorLabels "context" $) | nindent 6 }}
   {{- end }}
   {{- if $.Values.affinityPreset.podAntiAffinityType }}
-    podAntiAffinity: {{- include "helpers.affinities.pods" (dict "type" $.Values.affinityPreset.podAntiAffinityType "extraLabels" .selectorLabels "context" $) | nindent 4 }}
+    podAntiAffinity: {{- include "helpers.affinities.pods" (dict "type" $.Values.affinityPreset.podAntiAffinityType "extraLabels" .selectorLabels "context" $) | nindent 6 }}
   {{- end }}
   {{- if $.Values.affinityPreset.nodeAffinity.type }}
-    nodeAffinity: {{- include "helpers.affinities.nodes" (dict "type" $.Values.affinityPreset.nodeAffinity.type "key" $.Values.affinityPreset.nodeAffinity.key "values" $.Values.affinityPreset.nodeAffinity.values "context" $) | nindent 4 }}
+    nodeAffinity: {{- include "helpers.affinities.nodes" (dict "type" $.Values.affinityPreset.nodeAffinity.type "key" $.Values.affinityPreset.nodeAffinity.key "values" $.Values.affinityPreset.nodeAffinity.values "context" $) | nindent 6 }}
   {{- end }}
 {{- end }}
 {{- if any .priorityClassName $.Values.priorityClassName }}
