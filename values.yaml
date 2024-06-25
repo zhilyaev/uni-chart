@@ -474,3 +474,8 @@ ingresses: {}
 #      secretName: "nixys-tls"
 
 gateways: {}
+
+resourceQuotas: {}
+
+argocdAppsGeneral: {}
+argocdApps: {}

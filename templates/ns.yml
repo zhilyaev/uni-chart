@@ -1,10 +1,9 @@
-{{- define "obj.metadata" -}}
-{{- $ := .context -}}
-{{- $name := .name | default nil -}}
-{{- with .value -}}
+{{- range $name, $i := .Values.namespaces }}
+{{- if ne (.enabled | toString) "false" }}
+apiVersion: v1
+kind: Namespace
 metadata:
   name: {{ include "helpers.app.fullname" (dict "name" ( $name | default .name) "context" $) }}
-  namespace: {{ $.Release.Namespace | quote }}
   labels:
     {{- include "helpers.obj.labels" (dict "value" . "context" $) | nindent 4 }}
   {{- if any $.Values.annotations .annotations }}
@@ -12,9 +11,5 @@ metadata:
     {{- with $.Values.annotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}{{- end }}
     {{- with .annotations }}{{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}{{- end }}
   {{- end }}
-  {{- with .finalizers -}}
-  finalizers:
-    {{ . | nindent 4 }}
-  {{- end }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}

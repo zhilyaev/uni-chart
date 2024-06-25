@@ -9,9 +9,7 @@ apiVersion: {{ .apiVersion | default "external-secrets.io/v1beta1" }}
 kind: ExternalSecret
 {{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
 spec:
-  {{- with .refreshInterval }}
-  refreshInterval: {{ . }}
-  {{- end }}
+  refreshInterval: {{ .refreshInterval | default "60s" }}
   secretStoreRef:
     name: {{ include "helpers.tpl" (dict "value" .store "context" $) }}
     kind: SecretStore
@@ -24,7 +22,7 @@ spec:
     - extract:
         key: {{ include "helpers.tpl" (dict "value" .path "context" $) }}
         {{- with .revision }}
-        version: {{ include "helpers.tpl" (dict "value" . "context" $) }}
+        version: {{ include "helpers.tpl" (dict "value" . "context" $) | quote }}
         {{- end }}
 
 {{- end -}}

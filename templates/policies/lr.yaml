@@ -1,0 +1,17 @@
+{{- range $name, $i := .Values.LimitRanges }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: v1
+kind: LimitRange
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  limits:
+    {{- $limits := list -}}
+    {{- if kindIs "map" .limits -}}
+    {{- $limits = list .limits -}}
+    {{- else if kindIs "slice" .limits -}}
+    {{- $limits = .limits -}}
+    {{- end -}}
+    {{- include "helpers.obj.selectorLabels" (dict "value" $limits "context" $) | nindent 4 }}
+{{- end -}}
+{{- end -}}

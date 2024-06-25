@@ -1,0 +1,18 @@
+{{- $general := $.Values.podMonitorsGeneral -}}
+{{- range $name, $pm := .Values.podMonitors }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := mergeOverwrite dict $general . }}
+{{- with $merged }}
+---
+apiVersion: {{ .apiVersion | default "monitoring.coreos.com/v1" }}
+kind: PodMonitor
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  endpoints:
+    {{- include "helpers.tpl" (dict "value" .endpoints "context" $) | nindent 4 }}
+  selector:
+    matchLabels:
+      {{- include "helpers.obj.selectorLabels" (dict "value" . "context" $) | nindent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}

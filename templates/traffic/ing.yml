@@ -6,7 +6,6 @@
 ---
 apiVersion: {{ include "common.capabilities.ingress.apiVersion" $ }}
 kind: Ingress
-{{/* TODO: obj.metadata */}}
 metadata:
   name: {{ include "helpers.app.fullname" (dict "name" (.name | default $name) "context" $) }}
   namespace: {{ $.Release.Namespace | quote }}
@@ -53,22 +52,20 @@ spec:
   {{- if or .certManager .tls }}
   tls:
   {{- if .certManager }}
-  - hosts:
-    {{- range $ing.hosts }}
-    {{- $hostTLS :=  (kindIs "string" . ) | ternary (dict "hostname" . ) .  }}
-    {{ with $hostTLS }}
-    {{- if .hostname }}
-    - {{ include "helpers.tpl" (dict "value" .hostname "context" $) }}
-    {{- else }}
-    - {{ $name }}
-    {{- end }}
-    {{- end }}
-    {{- end }}
-    secretName: {{ .tlsName | default (include "helpers.app.fullname" (dict "name" ($ing.name | default $name ) "context" $)) }}-tls
-  {{- end }}
+  - secretName: {{ .certManager.tlsName | default (include "helpers.app.fullname" (dict "name" (.name | default $name ) "context" $)) }}-tls
+    hosts:
+      {{- range .hosts }}
+      {{- $hostTLS :=  (kindIs "string" . ) | ternary (dict "hostname" . ) .  }}
+      {{- with $hostTLS.hostname }}
+      - {{ include "helpers.tpl" (dict "value" . "context" $) }}
+      {{- else }}
+      - {{ $name }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+  {{- end }}{{/* certManager */}}
   {{- with .tls }}
   {{- include "helpers.tpl" ( dict "value" . "context" $ ) | nindent 2 }}
-  {{- end }}
   {{- end }}
 {{- end -}} {{/* merged */}}
 {{- end -}} {{/* enabled */}}

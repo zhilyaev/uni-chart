@@ -1,0 +1,41 @@
+{{- $general := $.Values.argocdAppsGeneral -}}
+{{- range $name, $a := .Values.argocdApps }}
+{{- if ne (.enabled | toString) "false" }}
+{{- $merged := mergeOverwrite dict $general . }}
+{{- with $merged }}
+---
+apiVersion: {{ .apiVersion | default "argoproj.io/v1alpha1" }}
+kind: Application
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  {{- with .project }}
+  project: {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 2 }}
+  {{- end }}
+
+  {{- with .destination }}
+  destination:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+
+  {{- with .info }}
+  info:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+
+  {{- with .syncPolicy }}
+  syncPolicy:
+    {{- include "helpers.tpl" (dict "value" . "context" $) | nindent 4 }}
+  {{- end }}
+
+  sources:
+    {{- $sources := list -}}
+    {{- if kindIs "map" .sources -}}
+    {{- $sources = list .sources -}}
+    {{- else if kindIs "slice" .sources -}}
+    {{- $sources = .sources -}}
+    {{- end -}}
+    {{- include "helpers.tpl" (dict "value" $sources "context" $) | nindent 2 }}
+
+{{- end }}
+{{- end }}
+{{- end }}

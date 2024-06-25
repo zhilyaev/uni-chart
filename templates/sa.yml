@@ -1,5 +1,5 @@
 {{- if .Values.serviceAccount -}}
-{{- $general := $.Values.statefulSetsGeneral -}}
+{{- $general := $.Values.serviceAccountGeneral -}}
 {{- $serviceAccount := list -}}
 {{- if kindIs "string" .Values.serviceAccount -}}
 {{- $serviceAccount = fromYaml .Values.serviceAccount -}}

@@ -11,10 +11,8 @@ spec:
   {{- with .clusterIP }}
   clusterIP: {{ . }}
   {{- end }}
-
   {{- if not (empty .type) }}
   type: {{ .type }}
-
   {{- if eq .type "LoadBalancer" }}
   {{- with .loadBalancerIP }}
   loadBalancerIP: {{ . }}
@@ -23,7 +21,6 @@ spec:
   loadBalancerSourceRanges:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-
   {{- else if (eq .type "NodePort") }}
   {{- with .externalTrafficPolicy }}
   externalTrafficPolicy: {{ . }}
@@ -37,7 +34,6 @@ spec:
   {{- with .externalIPs }}
   externalIPs: {{- toYaml . | nindent 4 }}
   {{- end }}
-
   {{- else }}
   type: "ClusterIP"
   {{- end }}

@@ -1,0 +1,11 @@
+{{- range $name, $i := .Values.resourceQuotas }}
+{{- if ne (.enabled | toString) "false" }}
+---
+apiVersion: v1
+kind: ResourceQuota
+{{ include "obj.metadata" (dict "name" $name "value" . "context" $) }}
+spec:
+  hard:
+    {{- include "helpers.obj.selectorLabels" (dict "value" .hard "context" $) | nindent 4 }}
+{{- end -}}
+{{- end -}}
