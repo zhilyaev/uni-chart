@@ -6,3 +6,4 @@ tests
 logo*
 debug/
 examples/
+.git/
