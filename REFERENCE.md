@@ -276,14 +276,14 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#stat
 
 ## `affinityPreset`
 
-| Name                  | Description                                                                                        | Value    |
-|-----------------------|----------------------------------------------------------------------------------------------------|----------|
-| `enabled`             | Enable/disable affinity preset                                                                     | `true`   |
-| `podAffinityType`     | Pod affinity preset. Ignored if workload `affinity` is set. Allowed values: `soft` or `hard`       | `"soft"` |
-| `podAntiAffinityType` | Pod anti-affinity preset. Ignored if workload `affinity` is set. Allowed values: `soft` or `hard`  | `"soft"` |
-| `nodeAffinity.type`   | Node affinity preset type. Ignored if workload `affinity` is set. Allowed values: `soft` or `hard` | `""`     |
-| `nodeAffinity.key`    | Node label key to match. Ignored if workload `affinity` is set                                     | `""`     |
-| `nodeAffinity.values` | Node label values to match. Ignored if workload `affinity` is set                                  | `[]`     |
+| Name                  | Description                                                                                                             | Value                           |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------|---------------------------------|
+| `enabled`             | Enable/disable affinity preset                                                                                          | `false`                         |
+| `podAffinityType`     | Pod affinity preset. Ignored if workload `affinity` is set. Allowed values: soft, hard, nil (nil means disabling)       | `"soft"`                        |
+| `podAntiAffinityType` | Pod anti-affinity preset. Ignored if workload `affinity` is set. Allowed values: soft, hard, nil (nil means disabling)  | `"soft"`                        |
+| `nodeAffinity.type`   | Node affinity preset type. Ignored if workload `affinity` is set. Allowed values: soft, hard, nil (nil means disabling) | `{}`                            |
+| `nodeAffinity.key`    | Node label key to match. Ignored if workload `affinity` is set                                                          | `"topology.kubernetes.io/zone"` |
+| `nodeAffinity.values` | Node label values to match. Ignored if workload `affinity` is set. Example: `values: [az1, az2]`                        | `[]`                            |
 
 ## `diagnosticMode`
 
@@ -493,6 +493,7 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#pers
 |----------------|------------------------------------------------------------|-------|
 | `type`         | Resource type of the volume ("configMap","secret","pvc")   | `""`  |
 | `name`         | Name of the resource that will be used with release prefix | `""`  |
+| `defaultMode`  | defaultMode                                                | `""`  |
 | `originalName` | Original name of the resource                              | `""`  |
 | `items`        | Array of volume items                                      | `[]`  |
 
