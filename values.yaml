@@ -146,7 +146,7 @@ affinityPreset:
   nodeAffinity:
     # -- Node affinity type
     # Allowed values: soft, hard, nil (nil means disabling)
-    type: "soft"
+    type: {} # it's nil
     # -- Node label key to match
     # E.g.
     # key: "kubernetes.io/e2e-az-name"
@@ -368,7 +368,7 @@ imagePullSecrets: {}
 configMaps:
   # -- envs
   envs:
-    enabled: true
+    enabled: true # Set here to false, if you don't need it
   #some-cm:
   #  labels:
   #    kek: lol
