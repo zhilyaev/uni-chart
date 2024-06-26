@@ -677,5 +677,5 @@ Specs: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#prio
 | `finalizers`  | Extra finalizers                                         | `{}`    |
 | `value`       | Int value prior                                          | `0`     |
 | `preemption`  | set policy                                               | `{}`    |
-| `default`  | set as default (only 1 default is available per cluster) | `false` |
+| `default`     | set as default (only 1 default is available per cluster) | `false` |
 
